@@ -1,12 +1,27 @@
+<p align="center">
+  <img src="banner.jpg" alt="Universal AI Enterprise Audit Pack" width="100%">
+</p>
+
 <div dir="rtl">
 
 # بسته ممیزی سازمانی هوش مصنوعی — Universal AI Enterprise Audit Pack
+
+<p align="center"><strong>یک ممیزی؛ برای Agentهای مختلف هوش مصنوعی و repositoryهای مختلف.</strong></p>
+
+<p align="center">
+<a href="https://github.com/taimazus/universal-ai-audit/releases">Release</a> ·
+<a href="https://github.com/taimazus/universal-ai-audit/actions">CI</a> ·
+<a href="LICENSE">License</a> ·
+<a href="https://github.com/taimazus/universal-ai-audit/stargazers">⭐ Star</a>
+</p>
 
 **نسخه: 1.1.0**
 
 [English](README.md) | **فارسی**
 
-یک بسته قابل‌حمل و مبتنی بر شواهد برای ممیزی عمیق کد و معماری پروژه‌ها توسط Agentهای مختلف هوش مصنوعی.
+یک بسته متن‌باز، قابل‌حمل و مبتنی بر شواهد برای ممیزی عمیق کد و معماری پروژه‌ها توسط Agentهای مختلف هوش مصنوعی.
+
+**ساخته و نگهداری‌شده توسط [Taimazus](https://github.com/taimazus).**
 
 ## قابلیت‌ها
 
@@ -14,11 +29,11 @@
 
 Adapterهای فعلی شامل Agentهای سازگار با `AGENTS.md`، Codex/OpenAI، Claude، Cursor، GitHub Copilot، Gemini و Google Antigravity است.
 
-## نصب کامل در Windows / PowerShell
-
-اگر فایل از اینترنت دانلود شده و Windows آن را مسدود کرده است:
+## شروع سریع در Windows / PowerShell
 
 ```powershell
+git clone https://github.com/taimazus/universal-ai-audit.git
+cd universal-ai-audit
 Unblock-File -LiteralPath .\install.ps1
 .\install.ps1 -DryRun
 .\install.ps1
@@ -37,6 +52,8 @@ Unblock-File -LiteralPath .\install.ps1
 ## نصب در Linux / macOS / WSL
 
 ```bash
+git clone https://github.com/taimazus/universal-ai-audit.git
+cd universal-ai-audit
 chmod +x ./install.sh
 ./install.sh --dry-run
 ./install.sh
@@ -113,11 +130,11 @@ Unblock-File -LiteralPath .\install.ps1
 
 ## یکپارچگی گزارش
 
-پروتکل ممیزی از Agent می‌خواهد یافته‌ها را بر اساس شواهد گزارش کند، محل دقیق سورس را در صورت امکان مشخص کند، vulnerability یا benchmark ساختگی تولید نکند و محدودیت‌های پوشش ممیزی را صریح بیان کند.
+پروتکل ممیزی از Agent می‌خواهد یافته‌ها را بر اساس شواهد گزارش کند، محل دقیق سورس را در صورت امکان مشخص کند، vulnerability یا benchmark ساختگی تولید نکند و محدودیت‌های پوشش ممیزی را صریح بیان کند. یافته‌های تولیدشده توسط AI همچنان باید پیش از تغییرات production توسط مهندس بررسی شوند.
 
-## Backup و حفظ تنظیمات
+## مشارکت و امنیت
 
-Installer برای فایل‌های موجود رفتار محافظه‌کارانه دارد. فایل‌های instruction موجود در موارد مناسب حفظ یا append می‌شوند و جایگزینی فایل‌های اختصاصی تولیدشده نیازمند `-Force`/`--force` است. هنگام replacement، backup ایجاد می‌شود.
+مشارکت‌ها خوش‌آمد هستند. راهنمای مشارکت را در [CONTRIBUTING.md](CONTRIBUTING.md) ببینید. برای گزارش‌های حساس امنیتی، به‌جای انتشار جزئیات exploit در Issue عمومی، [SECURITY.md](SECURITY.md) را دنبال کنید.
 
 ## نسخه
 
@@ -131,6 +148,11 @@ Installer برای فایل‌های موجود رفتار محافظه‌کار
 - راهنمای Windows Execution Policy / `Unblock-File`
 - پشتیبانی اصلاح‌شده از مسیرهای Antigravity IDE و CLI
 - راهنمای اجرای `/enterprise-audit`
+- CI چندسکویی و ارائه عمومی پروژه
+
+## سازنده
+
+این پروژه توسط **[Taimazus](https://github.com/taimazus)** ساخته و نگهداری می‌شود. اگر برایتان مفید بود، با ⭐ دادن به repository و معرفی آن به توسعه‌دهندگان دیگر به دیده‌شدن پروژه کمک کنید.
 
 ## مجوز
 
