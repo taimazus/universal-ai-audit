@@ -1,12 +1,24 @@
+<p align="center">
+  <img src="banner.jpg" alt="Universal AI Enterprise Audit Pack — One Audit. Any AI Agent, Any Repository." width="100%">
+</p>
+
 # Universal AI Enterprise Audit Pack
 
-[![Release](https://img.shields.io/github/v/release/taimazus/universal-ai-audit?display_name=tag)](https://github.com/taimazus/universal-ai-audit/releases)
-[![CI](https://github.com/taimazus/universal-ai-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/taimazus/universal-ai-audit/actions/workflows/ci.yml)
-[![License](https://img.shields.io/github/license/taimazus/universal-ai-audit)](LICENSE)
+<p align="center">
+  <strong>One Audit. Any AI Agent, Any Repository.</strong><br>
+  Evidence-first code, architecture, security, performance and quality audits for modern AI coding agents.
+</p>
 
-**Version 1.1.0** · **English** | [فارسی](README.fa.md)
+<p align="center">
+  <a href="https://github.com/taimazus/universal-ai-audit/releases"><img src="https://img.shields.io/github/v/release/taimazus/universal-ai-audit?display_name=tag" alt="Release"></a>
+  <a href="https://github.com/taimazus/universal-ai-audit/actions/workflows/ci.yml"><img src="https://github.com/taimazus/universal-ai-audit/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/taimazus/universal-ai-audit" alt="License"></a>
+  <a href="https://github.com/taimazus/universal-ai-audit/stargazers"><img src="https://img.shields.io/github/stars/taimazus/universal-ai-audit?style=flat" alt="GitHub stars"></a>
+</p>
 
-A portable, evidence-first enterprise code-audit instruction pack for heterogeneous repositories and multiple AI coding agents.
+<p align="center"><strong>Version 1.1.0</strong> · <strong>English</strong> | <a href="README.fa.md">فارسی</a></p>
+
+A portable, open-source, evidence-first enterprise code-audit instruction pack for heterogeneous repositories and multiple AI coding agents.
 
 **Created and maintained by [Taimazus](https://github.com/taimazus).**
 
@@ -29,6 +41,8 @@ Install the audit protocol once and reuse it across projects. It is designed to 
 ## Quick start — Windows
 
 ```powershell
+git clone https://github.com/taimazus/universal-ai-audit.git
+cd universal-ai-audit
 Unblock-File -LiteralPath .\install.ps1
 .\install.ps1 -DryRun
 .\install.ps1
@@ -39,6 +53,8 @@ If an organizational `AllSigned`/Group Policy applies, follow your organization'
 ## Quick start — Linux / macOS / WSL
 
 ```bash
+git clone https://github.com/taimazus/universal-ai-audit.git
+cd universal-ai-audit
 chmod +x ./install.sh
 ./install.sh --dry-run
 ./install.sh
@@ -118,6 +134,6 @@ Highlights include Persian documentation, bilingual navigation, Windows `Unblock
 
 ## Author
 
-Created and maintained by **[Taimazus](https://github.com/taimazus)**. If the project helps you, starring the repository and sharing it with other developers helps the project grow.
+Created and maintained by **[Taimazus](https://github.com/taimazus)**. If the project helps you, please consider [starring the repository](https://github.com/taimazus/universal-ai-audit) and sharing it with other developers.
 
 See [LICENSE](LICENSE) for license terms.
