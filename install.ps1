@@ -19,7 +19,8 @@ $Selected = if($Agents -contains 'all'){@('generic','codex','claude','cursor','c
 $Changed=0; $Skipped=0; $Failed=0
 function Write-Safe([string]$Path,[string]$Content,[switch]$Append){
   try{
-    $parent=Split-Path -Parent $Path; if($parent -and -not(Test-Path -LiteralPath $parent)){ if(-not $DryRun){New-Item -ItemType Directory -Path $parent -Force|Out-Null} }
+    $parent=Split-Path -Parent $Path
+    if($parent -and -not(Test-Path -LiteralPath $parent)){ if(-not $DryRun){New-Item -ItemType Directory -Path $parent -Force|Out-Null} }
     if(Test-Path -LiteralPath $Path){
       $old=Get-Content -Raw -LiteralPath $Path -Encoding UTF8
       if($old -eq $Content -or ($Append -and $old.Contains('Universal Enterprise Audit Agent Instructions'))){$script:Skipped++; return}
@@ -38,7 +39,8 @@ function ProjectInstall([string]$P){
   if($Selected -contains 'gemini'){Write-Safe (Join-Path $P 'GEMINI.md') $AgentText -Append}
   if($Selected -contains 'cursor'){$mdc="---`ndescription: Universal evidence-based enterprise code audit protocol`nalwaysApply: false`n---`n`n$Core"; Write-Safe (Join-Path $P '.cursor/rules/enterprise-audit.mdc') $mdc}
   if($Selected -contains 'copilot'){Write-Safe (Join-Path $P '.github/instructions/enterprise-audit.instructions.md') ("---`napplyTo: '**/*'`n---`n`n"+$Core)}
-  if($Selected -contains 'antigravity'){Write-Safe (Join-Path $P '.antigravity/skills/enterprise-audit/SKILL.md') $Core}
+  # Antigravity 2.0 / IDE / CLI workspace standard
+  if($Selected -contains 'antigravity'){Write-Safe (Join-Path $P '.agents/skills/enterprise-audit/SKILL.md') $Core}
   Write-Safe (Join-Path $P '.ai-audit/core/enterprise-audit.md') $Core
 }
 if(-not $GlobalOnly){ProjectInstall ([IO.Path]::GetFullPath($ProjectPath))}
@@ -47,7 +49,12 @@ if(-not $ProjectOnly){
   if($Selected -contains 'claude'){Write-Safe (Join-Path $HomeDir '.claude/CLAUDE.md') $AgentText -Append}
   if($Selected -contains 'cursor'){Write-Safe (Join-Path $HomeDir '.cursor/rules/enterprise-audit.mdc') ("---`ndescription: Universal enterprise audit`nalwaysApply: false`n---`n`n"+$Core)}
   if($Selected -contains 'copilot'){Write-Safe (Join-Path $HomeDir '.copilot/instructions/enterprise-audit.instructions.md') ("---`napplyTo: '**/*'`n---`n`n"+$Core)}
-  if($Selected -contains 'antigravity'){Write-Safe (Join-Path $HomeDir '.antigravity/skills/enterprise-audit/SKILL.md') $Core}
+  if($Selected -contains 'antigravity'){
+    # Antigravity 2.0 / IDE global skill
+    Write-Safe (Join-Path $HomeDir '.gemini/config/skills/enterprise-audit/SKILL.md') $Core
+    # Antigravity CLI global skill
+    Write-Safe (Join-Path $HomeDir '.gemini/antigravity-cli/skills/enterprise-audit/SKILL.md') $Core
+  }
 }
 Write-Host "Changed=$Changed Skipped=$Skipped Failed=$Failed"
 if($Failed -gt 0){exit 1}else{exit 0}
