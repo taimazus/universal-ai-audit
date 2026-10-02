@@ -38,9 +38,9 @@ bash ./install.sh --global-only --agents codex --skills project-docs
 bash ./install.sh --project-only --skills none
 ```
 
-`all` پیش‌فرض شامل هفت skill تکمیلی است؛ `enterprise-audit` همیشه جزو بستهٔ پایه است. `none` فقط skillهای تکمیلی را غیرفعال می‌کند. `none` با نام دیگر قابل ترکیب نیست. انتخاب skill نصب قبلی را حذف نمی‌کند. گزینهٔ project-only و global-only با هم معتبر نیستند.
+`all` پیش‌فرض شامل نه skill تکمیلی است؛ `enterprise-audit` همیشه جزو بستهٔ پایه است. `none` فقط skillهای تکمیلی را غیرفعال می‌کند. `none` با نام دیگر قابل ترکیب نیست. انتخاب skill نصب قبلی را حذف نمی‌کند. گزینهٔ project-only و global-only با هم معتبر نیستند.
 
-مسیرهای native و سراسری در [جدول نصب سراسری](global-installation.md) آمده‌اند. همهٔ هشت skill برای agentهای این جدول قابل نصب‌اند؛ generic قرارداد مشترک را تولید می‌کند و discovery آن وابسته به محصول است.
+مسیرهای native و سراسری در [جدول نصب سراسری](global-installation.md) آمده‌اند. همهٔ ده skill برای agentهای این جدول قابل نصب‌اند؛ generic قرارداد مشترک را تولید می‌کند و discovery آن وابسته به محصول است.
 
 پروتکل پایه در `core/enterprise-audit.md` نصب می‌شود. adapterها قرارداد فایل تولید می‌کنند؛ بارگذاری خودکار در هر محصول باید در محیط همان محصول بررسی شود. installer راهنماهای انسانی docs را به پروژهٔ مقصد کپی نمی‌کند؛ آن‌ها در این بسته قرار دارند.
 

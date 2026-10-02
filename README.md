@@ -2,7 +2,7 @@
 
 # Universal AI Enterprise Audit Pack
 
-Version: **1.3.0**. [راهنمای فارسی](docs/README.md) · [مثال همهٔ skillها](docs/skills.md) · [حالت‌های ترکیبی](docs/combinations.md) · [نصب و rollback](docs/installation.md) · [تغییرات](CHANGELOG.md)
+Version: **1.4.0**. [راهنمای فارسی](docs/README.md) · [مثال همهٔ skillها](docs/skills.md) · [حالت‌های ترکیبی](docs/combinations.md) · [نصب و rollback](docs/installation.md) · [تغییرات](CHANGELOG.md)
 
 A portable, evidence-first code-audit instruction pack for heterogeneous repositories and multiple coding agents.
 
@@ -26,7 +26,7 @@ Ask the agent for `/audit-deep`, `/audit-goal`, `enterprise audit`, `deep code a
 
 ## Engineering skills
 
-Seven focused skills are included in `.agents/skills/`, with Persian reports by default:
+Nine focused skills are included in `.agents/skills/`, with Persian reports by default:
 
 | Skill | Purpose |
 | --- | --- |
@@ -37,8 +37,10 @@ Seven focused skills are included in `.agents/skills/`, with Persian reports by 
 | `release-readiness` | Check installation, versions, upgrades, packaging, and rollback. |
 | `project-docs` | Create and synchronize Markdown documentation, local Wiki pages, and editable diagrams from source evidence. |
 | `audit-fix-loop` | Repeat evidence-based repairs, regression checks, and review until confirmed findings are resolved and the final pass finds no new actionable defects. |
+| `task-orchestrator` | Select relevant available skills, complete the requested task, and verify acceptance criteria with concise evidence. |
+| `git-release-sync` | Perform authorized Git/version/tag/Release synchronization while preserving history and verifying publication. |
 
-Installers include all seven by default. Use `-Skills none` / `--skills none` for the original audit-only pack, or choose individual skills:
+Installers include all nine by default. Use `-Skills none` / `--skills none` for the original audit-only pack, or choose individual skills:
 
 ```powershell
 ./install.ps1 -ProjectOnly -Agents codex -Skills pr-review,security-audit -DryRun

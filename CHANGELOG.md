@@ -2,6 +2,13 @@
 
 [فارسی](CHANGELOG.fa.md)
 
+## 1.4.0 — ۲۰۲۶-۱۰-۰۲
+
+- افزودن task-orchestrator برای اجرای تطبیقی درخواست با انتخاب skillهای مرتبط و معیار پذیرش.
+- افزودن git-release-sync برای هماهنگی Git، نسخه، tag و Release مجاز با حفظ تاریخچه.
+- ده skill قابل نصب؛ راهنماهای فارسی و مثال‌های تکی/ترکیبی تکمیل شدند.
+- انتشار تجمیعی بهبودهای نسخه‌های 1.2 و 1.3 همراه تغییرات جدید.
+
 ## 1.3.0 — 2026-10-02
 
 - Native global skills for Codex, Claude Code, Cursor, Antigravity, Gemini CLI, Copilot, OpenCode, Windsurf/Cascade, Cline and Roo Code.

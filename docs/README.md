@@ -1,10 +1,10 @@
 # راهنمای بسته
 
-نسخهٔ جاری: `1.3.0`. منبع نسخه: [VERSION](../VERSION).
+نسخهٔ جاری: `1.4.0`. منبع نسخه: [VERSION](../VERSION).
 
 - [نصب و بازیابی](installation.md)
 - [نصب سراسری همهٔ agentهای پشتیبانی‌شده](global-installation.md)
-- [مثال کامل برای هر هشت skill](skills.md)
+- [مثال کامل برای هر ده skill](skills.md)
 - [ترکیب skillها و انتقال یافته‌ها](combinations.md)
 - [تست و نگهداری](maintenance.md)
 - [تغییرات فارسی](../CHANGELOG.fa.md)

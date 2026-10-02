@@ -7,7 +7,7 @@ param(
   [string]$ProjectPath = (Get-Location).ProviderPath,
   [ValidateSet('all','generic','codex','claude','cursor','copilot','gemini','antigravity','opencode','windsurf','cline','roo')]
   [string[]]$Agents = @('all'),
-  [ValidateSet('all','none','audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop')]
+  [ValidateSet('all','none','audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync')]
   [string[]]$Skills = @('all'),
   [string]$UserHome = [Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)
 )
@@ -20,7 +20,7 @@ $AgentText = Get-Content -Raw -LiteralPath (Join-Path $Root 'AGENTS.md') -Encodi
 if ([string]::IsNullOrWhiteSpace($Core) -or [string]::IsNullOrWhiteSpace($AgentText)) { throw 'Audit source files must not be empty.' }
 $InstallerCmdlet=$PSCmdlet
 if($Skills -contains 'none' -and $Skills.Count -gt 1){throw "'none' cannot be combined with other skills."}
-$SkillNames=@('audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop')
+$SkillNames=@('audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync')
 $SelectedSkills=if($Skills -contains 'none'){@()}elseif($Skills -contains 'all'){$SkillNames}else{@($Skills | Select-Object -Unique)}
 $SkillContents=@{}
 foreach($name in $SelectedSkills){
