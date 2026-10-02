@@ -30,7 +30,7 @@ Run-Installer @('-ProjectOnly','-ProjectPath',$Project,'-Force')
 Assert (@(Get-ChildItem $Project -Filter '.ai-audit-backup-*').Count -eq 1) 'Backup missing.'
 Assert (@(Get-ChildItem $Project -Filter '.ai-audit-backup-*' | Get-ChildItem | Where-Object {(Get-Content -Raw $_.FullName) -eq 'original'}).Count -eq 1) 'Original backup lost.'
 Run-Installer @('-ProjectOnly','-ProjectPath',$Project,'-Skills','all')
-foreach($name in 'audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync'){
+foreach($name in 'audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync','project-builder'){
   $SourceHash=(Get-FileHash (Join-Path $Root ".agents/skills/$name/SKILL.md")).Hash
   Assert ((Get-FileHash (Join-Path $Project ".agents/skills/$name/SKILL.md")).Hash -eq $SourceHash) 'Native skill mismatch.'
   Assert ((Get-FileHash (Join-Path $Project "core/skills/$name/SKILL.md")).Hash -eq $SourceHash) 'Portable skill mismatch.'
@@ -64,7 +64,7 @@ Assert (-not(Test-Path $Global)) 'Global WhatIf wrote files.'
 Run-Installer @('-GlobalOnly','-UserHome',$Global,'-Skills','all')
 foreach($dir in '.agents/skills','.claude/skills','.cursor/skills','.copilot/skills','.gemini/skills','.gemini/config/skills','.gemini/antigravity-cli/skills','.config/opencode/skills','.codeium/windsurf/skills','.cline/skills','.roo/skills'){
   Assert (Test-Path (Join-Path $Global "$dir/enterprise-audit/SKILL.md")) 'Global base skill missing.'
-  foreach($name in 'audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync'){
+  foreach($name in 'audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync','project-builder'){
     Assert ((Get-FileHash (Join-Path $Global "$dir/$name/SKILL.md")).Hash -eq (Get-FileHash (Join-Path $Root ".agents/skills/$name/SKILL.md")).Hash) 'Global skill mismatch.'
   }
 }
@@ -76,4 +76,23 @@ $GlobalSelected=Join-Path $Temp 'global-selected'
 Run-Installer @('-GlobalOnly','-UserHome',$GlobalSelected,'-Agents','claude','-Skills','pr-review')
 Assert (Test-Path (Join-Path $GlobalSelected '.claude/skills/pr-review/SKILL.md')) 'Selected global skill missing.'
 Assert (-not(Test-Path (Join-Path $GlobalSelected '.cursor'))) 'Unselected global agent installed.'
+$LongProject=Join-Path $Temp ('long-'+('x'*120))
+$BuilderProject=Join-Path $Temp 'builder-only'
+Run-Installer @('-ProjectOnly','-ProjectPath',$BuilderProject,'-Agents','codex','-Skills','project-builder')
+Assert ((Get-FileHash (Join-Path $BuilderProject '.agents/skills/project-builder/SKILL.md')).Hash -eq (Get-FileHash (Join-Path $Root '.agents/skills/project-builder/SKILL.md')).Hash) 'Project builder source mismatch.'
+Assert ((Get-Content -Raw (Join-Path $BuilderProject 'AGENTS.md')).Contains('core/skills/project-builder/SKILL.md')) 'Project builder route missing.'
+Assert (-not(Test-Path (Join-Path $BuilderProject '.agents/skills/security-audit'))) 'Builder-only installed unrelated skill.'
+Run-Installer @('-ProjectOnly','-ProjectPath',$LongProject,'-Agents','codex')
+$LongCore=Join-Path $LongProject 'core/enterprise-audit.md'
+[IO.File]::WriteAllText($LongCore,'long-path-original')
+$UpgradeOutput=@(Run-Installer @('-ProjectOnly','-ProjectPath',$LongProject,'-Agents','codex','-Force'))
+$BackupMessage=@($UpgradeOutput | Where-Object {"$_" -like '[[]BACKUP[]]*'})
+Assert ($BackupMessage.Count -eq 1) 'Long-path backup location was not reported.'
+$LongBackup=([string]$BackupMessage[0] -replace '^\[BACKUP\] ','') -split ' -> ',2
+Assert ((Get-Content -Raw -LiteralPath $LongBackup[0]) -eq 'long-path-original') 'Long-path original backup lost.'
+Assert ((Get-Content -Raw -LiteralPath ($LongBackup[0]+'.path')) -eq $LongCore) 'Backup path mapping missing.'
+Assert ((Get-FileHash $LongCore).Hash -eq (Get-FileHash (Join-Path $Root 'core/enterprise-audit.md')).Hash) 'Long-path upgrade failed.'
+$BeforeBackupCount=@(Get-ChildItem -LiteralPath (Split-Path $LongBackup[0]) -File).Count
+Run-Installer @('-ProjectOnly','-ProjectPath',$LongProject,'-Agents','codex','-Force')
+Assert (@(Get-ChildItem -LiteralPath (Split-Path $LongBackup[0]) -File).Count -eq $BeforeBackupCount) 'Repeated forced upgrade created backups.'
 Write-Output 'PASS: PowerShell installer regressions'

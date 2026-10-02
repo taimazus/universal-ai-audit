@@ -2,6 +2,16 @@
 
 [فارسی](CHANGELOG.fa.md)
 
+## 1.5.0 — 2026-10-02
+
+- Synchronize documentation with the current source, add Persian architecture/sequence diagrams and a local Wiki draft, and clarify unreleased versus tagged content.
+
+- Add the self-contained project-builder skill, interactive project guide, selective/global installation and regression checks; eleven skills in total.
+
+- Use short PowerShell backup IDs with original-path sidecars and a reported temporary fallback for long paths.
+- Avoid redundant Bash writes/backups on identical forced installs; add regression checks.
+- Correct Bash invocation and the all-skills workflow example; record the audit remediation ledger.
+
 <div dir="rtl">
 
 ## 1.4.0 — ۲۰۲۶-۱۰-۰۲

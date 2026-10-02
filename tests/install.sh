@@ -20,7 +20,7 @@ printf 'original\n' > "$T/project with spaces/core/enterprise-audit.md"
 run --agents generic --force
 run --agents generic --force
 backups=("$T/project with spaces/core/enterprise-audit.md.ai-audit.bak."*)
-[[ ${#backups[@]} == 2 ]]
+[[ ${#backups[@]} == 1 ]]
 grep -l '^original$' "${backups[@]}" >/dev/null
 before="$(find "$T/project with spaces" -type f -exec cksum {} \;)"
 run --agents all --force --dry-run
@@ -39,7 +39,7 @@ printf ' \n' > "$T/incomplete/core/enterprise-audit.md"
 expect_status 1 bash "$T/incomplete/install.sh" --project-only --project "$T/missing"
 [[ ! -e "$T/missing" ]]
 run --agents all --skills all
-for skill in audit-remediation security-audit pr-review test-gap-analysis release-readiness project-docs audit-fix-loop task-orchestrator git-release-sync; do
+for skill in audit-remediation security-audit pr-review test-gap-analysis release-readiness project-docs audit-fix-loop task-orchestrator git-release-sync project-builder; do
   cmp "$ROOT/.agents/skills/$skill/SKILL.md" "$T/project with spaces/.agents/skills/$skill/SKILL.md"
   cmp "$ROOT/.agents/skills/$skill/SKILL.md" "$T/project with spaces/core/skills/$skill/SKILL.md"
   grep -q "core/skills/$skill/SKILL.md" "$T/project with spaces/AGENTS.md"
@@ -69,7 +69,7 @@ bash "$ROOT/install.sh" --global-only --home "$T/global-home" --dry-run
 bash "$ROOT/install.sh" --global-only --home "$T/global-home"
 for dir in .agents/skills .claude/skills .cursor/skills .copilot/skills .gemini/skills .gemini/config/skills .gemini/antigravity-cli/skills .config/opencode/skills .codeium/windsurf/skills .cline/skills .roo/skills; do
   grep -q '^name: enterprise-audit$' "$T/global-home/$dir/enterprise-audit/SKILL.md"
-  for skill in audit-remediation security-audit pr-review test-gap-analysis release-readiness project-docs audit-fix-loop task-orchestrator git-release-sync; do
+  for skill in audit-remediation security-audit pr-review test-gap-analysis release-readiness project-docs audit-fix-loop task-orchestrator git-release-sync project-builder; do
     cmp "$ROOT/.agents/skills/$skill/SKILL.md" "$T/global-home/$dir/$skill/SKILL.md"
   done
 done
@@ -77,7 +77,13 @@ done
 before="$(find "$T/global-home" -type f -exec cksum {} \;)"
 bash "$ROOT/install.sh" --global-only --home "$T/global-home"
 [[ "$before" == "$(find "$T/global-home" -type f -exec cksum {} \;)" ]]
+bash "$ROOT/install.sh" --global-only --home "$T/global-home" --force
+[[ "$before" == "$(find "$T/global-home" -type f -exec cksum {} \;)" ]]
 bash "$ROOT/install.sh" --global-only --home "$T/global-selected" --agents claude --skills pr-review
 [[ -f "$T/global-selected/.claude/skills/pr-review/SKILL.md" && ! -e "$T/global-selected/.cursor" ]]
 expect_status 2 run --home
+bash "$ROOT/install.sh" --project-only --project "$T/builder-only" --agents codex --skills project-builder
+cmp "$ROOT/.agents/skills/project-builder/SKILL.md" "$T/builder-only/.agents/skills/project-builder/SKILL.md"
+grep -q 'core/skills/project-builder/SKILL.md' "$T/builder-only/AGENTS.md"
+[[ ! -e "$T/builder-only/.agents/skills/security-audit" ]]
 echo 'PASS: Bash installer regressions'

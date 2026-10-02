@@ -20,18 +20,18 @@ while (($#)); do
       case "$option" in --project) PROJECT="$1";; --agents) AGENTS="$1";; --skills) SKILLS="$1";; --home) USER_HOME="$1";; esac ;;
     -h|--help)
       echo 'install.sh [--project-only|--global-only] [--dry-run] [--force] [--project PATH] [--agents all,codex,claude,cursor,copilot,gemini,antigravity,opencode,windsurf,cline,roo,generic] [--home PATH]'
-      echo '  --skills all|none|audit-remediation,security-audit,pr-review,test-gap-analysis,release-readiness,project-docs,audit-fix-loop,task-orchestrator,git-release-sync (default: all)'
+      echo '  --skills all|none|audit-remediation,security-audit,pr-review,test-gap-analysis,release-readiness,project-docs,audit-fix-loop,task-orchestrator,git-release-sync,project-builder (default: all)'
       exit 0 ;;
     *) usage_error "Unknown option: $1" ;;
   esac
   shift
 done
-skill_names=(audit-remediation security-audit pr-review test-gap-analysis release-readiness project-docs audit-fix-loop task-orchestrator git-release-sync)
+skill_names=(audit-remediation security-audit pr-review test-gap-analysis release-readiness project-docs audit-fix-loop task-orchestrator git-release-sync project-builder)
 [[ "$SKILLS" != ,* && "$SKILLS" != *, && "$SKILLS" != *,,* ]] || usage_error 'Empty skill name.'
 IFS=',' read -r -a requested_skills <<< "$SKILLS"
 for skill in "${requested_skills[@]}"; do
   case "$skill" in
-    all|none|audit-remediation|security-audit|pr-review|test-gap-analysis|release-readiness|project-docs|audit-fix-loop|task-orchestrator|git-release-sync) ;;
+    all|none|audit-remediation|security-audit|pr-review|test-gap-analysis|release-readiness|project-docs|audit-fix-loop|task-orchestrator|git-release-sync|project-builder) ;;
     *) usage_error "Invalid skill: $skill" ;;
   esac
 done
@@ -67,9 +67,10 @@ done
 FAILED=0; CHANGED=0; SKIPPED=0
 has(){ [[ ",$AGENTS," == *,all,* || ",$AGENTS," == *,$1,* ]]; }
 write_safe(){
-  local path="$1" content="$2" append="${3:-0}" backup
+  local path="$1" content="$2" append="${3:-0}" backup old
   if [[ -f "$path" ]]; then
-    if [[ "$append" == 1 && "$(cat "$path")" == *"$content"* ]]; then
+    old="$(cat "$path")" || { ((FAILED+=1)); return; }
+    if [[ "$old" == "$content" || ( "$append" == 1 && "$old" == *"$content"* ) ]]; then
       ((SKIPPED+=1)); return
     fi
     if [[ "$append" != 1 && "$FORCE" != 1 ]]; then

@@ -49,16 +49,21 @@ audit-fix-loop → project-docs → release-readiness را اجرا کن.
 ## همهٔ skillها
 
 ```text
-هر ده skill را به صورت یک workflow هماهنگ روی پروژه اجرا کن:
+هر یازده skill را به صورت یک workflow هماهنگ روی پروژه اجرا کن:
+project-builder نیازمندی‌ها و سناریوی پروژهٔ جدید را با پرسش‌وپاسخ روشن و دامنهٔ توافق‌شده را پیاده کند؛
+task-orchestrator هماهنگ‌کنندهٔ مراحل و ledger مشترک باشد؛
 enterprise-audit و security-audit برای کل کد؛ pr-review برای diff نسبت به main؛
 test-gap-analysis برای سناریوهای مهم؛ audit-fix-loop با audit-remediation برای اصلاح و
 بازبینی تا رفع یافته‌های تأییدشده؛ project-docs برای مستندات نهایی؛ release-readiness برای checks آخر.
+پس از موفقیت checks، git-release-sync فقط تغییرات مرتبط را در commit محلی ثبت کند؛ push و tag و Release انجام نده.
 اگر base موجود نیست، محدودیت PR را گزارش کن و بقیهٔ کار را ادامه بده.
 یک ledger مشترک، یک مالک حلقه و یک گزارش نهایی بده. بررسی لازم را برای صرفه‌جویی توکن حذف نکن.
 انتشار خارجی انجام نده؛ موارد واقعاً مسدود را ناتمام اعلام کن.
 ```
 
 ## ترکیب دلخواه و بودجه
+
+برای پروژهٔ جدید، معمولاً `project-builder → project-docs → release-readiness` کافی است؛ review و حلقهٔ اصلاح فقط در مراحل مرتبط اضافه شوند. [راهنمای ساخت پروژه](project-builder.md) نمونهٔ کامل تعامل دارد. برای پروژهٔ موجودی که فقط ممیزی می‌خواهد، مرحلهٔ ساخت را حذف کنید.
 
 ```text
 skillهای [نام‌ها] را به ترتیب [مراحل] برای [دامنه] استفاده کن.

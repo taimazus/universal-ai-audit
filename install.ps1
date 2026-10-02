@@ -7,7 +7,7 @@ param(
   [string]$ProjectPath = (Get-Location).ProviderPath,
   [ValidateSet('all','generic','codex','claude','cursor','copilot','gemini','antigravity','opencode','windsurf','cline','roo')]
   [string[]]$Agents = @('all'),
-  [ValidateSet('all','none','audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync')]
+  [ValidateSet('all','none','audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync','project-builder')]
   [string[]]$Skills = @('all'),
   [string]$UserHome = [Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)
 )
@@ -20,7 +20,7 @@ $AgentText = Get-Content -Raw -LiteralPath (Join-Path $Root 'AGENTS.md') -Encodi
 if ([string]::IsNullOrWhiteSpace($Core) -or [string]::IsNullOrWhiteSpace($AgentText)) { throw 'Audit source files must not be empty.' }
 $InstallerCmdlet=$PSCmdlet
 if($Skills -contains 'none' -and $Skills.Count -gt 1){throw "'none' cannot be combined with other skills."}
-$SkillNames=@('audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync')
+$SkillNames=@('audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync','project-builder')
 $SelectedSkills=if($Skills -contains 'none'){@()}elseif($Skills -contains 'all'){$SkillNames}else{@($Skills | Select-Object -Unique)}
 $SkillContents=@{}
 foreach($name in $SelectedSkills){
@@ -31,6 +31,10 @@ foreach($name in $SelectedSkills){
 $HomeDir=if($ProjectOnly){[IO.Path]::GetFullPath($ProjectPath)}else{[IO.Path]::GetFullPath($UserHome)}
 if($GlobalOnly){$ProjectPath=$HomeDir}
 $BackupRoot=Join-Path $ProjectPath ('.ai-audit-backup-' + [guid]::NewGuid().ToString('N'))
+# Leave room for short backup IDs on Windows PowerShell's legacy path APIs.
+if($BackupRoot.Length -gt 200){
+  $BackupRoot=Join-Path ([IO.Path]::GetTempPath()) ('.ai-audit-backup-' + [guid]::NewGuid().ToString('N'))
+}
 $Selected = if($Agents -contains 'all'){@('generic','codex','claude','cursor','copilot','gemini','antigravity','opencode','windsurf','cline','roo')}else{$Agents}
 $Changed=0; $Skipped=0; $Failed=0
 function Write-Safe([string]$Path,[string]$Content,[switch]$Append){
@@ -47,9 +51,12 @@ function Write-Safe([string]$Path,[string]$Content,[switch]$Append){
     if(-not $InstallerCmdlet.ShouldProcess($Path,'Install audit instructions')){$script:Skipped++; return}
     if($parent -and -not(Test-Path -LiteralPath $parent)){New-Item -ItemType Directory -Path $parent -Force|Out-Null}
     if($exists){
-      $rel=($Path -replace '[:\\/]','_')
+      $backupId=[guid]::NewGuid().ToString('N')
       New-Item -ItemType Directory -Path $BackupRoot -Force|Out-Null
-      Copy-Item -LiteralPath $Path -Destination (Join-Path $BackupRoot ($rel+'-'+[guid]::NewGuid().ToString('N')))
+      $backupFile=Join-Path $BackupRoot $backupId
+      Copy-Item -LiteralPath $Path -Destination $backupFile
+      [IO.File]::WriteAllText(($backupFile+'.path'),[IO.Path]::GetFullPath($Path),[Text.UTF8Encoding]::new($false))
+      Write-Host "[BACKUP] $backupFile -> $Path"
     }
     Write-Host "[WRITE] $Path"
     [IO.File]::WriteAllText($Path,$Content,[Text.UTF8Encoding]::new($false))

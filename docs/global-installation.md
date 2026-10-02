@@ -44,7 +44,7 @@ bash ./install.sh --global-only --agents all --skills all
 | roo | `.roo/skills` | `.roo/skills` |
 | generic | `.agents/skills` | AGENTS.md و core/skills |
 
-هر skill در `<root>/<name>/SKILL.md` قرار می‌گیرد. مسیر مشترک codex و generic فقط یک بار نوشته می‌شود. enterprise-audit همیشه نصب می‌شود؛ `none` تنها نه skill تکمیلی را کنار می‌گذارد. نصب global فایل پروژه‌ای تولید نمی‌کند.
+هر skill در `<root>/<name>/SKILL.md` قرار می‌گیرد. مسیر مشترک codex و generic فقط یک بار نوشته می‌شود. enterprise-audit همیشه نصب می‌شود؛ `none` تنها ده skill تکمیلی را کنار می‌گذارد. نصب global فایل پروژه‌ای تولید نمی‌کند.
 
 ## انتخاب چند agent یا چند skill
 
