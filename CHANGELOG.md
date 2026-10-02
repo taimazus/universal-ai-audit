@@ -2,6 +2,8 @@
 
 [فارسی](CHANGELOG.fa.md)
 
+<div dir="rtl">
+
 ## 1.4.0 — ۲۰۲۶-۱۰-۰۲
 
 - افزودن task-orchestrator برای اجرای تطبیقی درخواست با انتخاب skillهای مرتبط و معیار پذیرش.
@@ -9,12 +11,16 @@
 - ده skill قابل نصب؛ راهنماهای فارسی و مثال‌های تکی/ترکیبی تکمیل شدند.
 - انتشار تجمیعی بهبودهای نسخه‌های 1.2 و 1.3 همراه تغییرات جدید.
 
+</div>
+
 ## 1.3.0 — 2026-10-02
 
 - Native global skills for Codex, Claude Code, Cursor, Antigravity, Gemini CLI, Copilot, OpenCode, Windsurf/Cascade, Cline and Roo Code.
 - Isolated user-home override and global installation regressions; no always-loaded global skill injection.
 - Bash 3.2 empty-array fix based on macOS CI failure.
 - Persian documentation counterparts and current official path references.
+
+<div dir="rtl">
 
 # تغییرات
 
@@ -28,6 +34,8 @@
 - تست‌های regression در PowerShell و Bash.
 
 حجم متن هشت SKILL.md از ۲۸٬۸۲۷ به ۱۷٬۰۲۳ کاراکتر کاهش یافت (حدود ۴۱٪). این معیار معادل تعداد توکن یا تضمین کیفیت مدل نیست؛ صرفه‌جویی واقعی به tokenizer و دامنهٔ کار بستگی دارد.
+
+</div>
 
 ## [1.1.0] - 2026-10-01
 

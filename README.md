@@ -7,6 +7,8 @@ Version: **1.4.0**. [راهنمای فارسی](docs/README.md) · [مثال ه�
 A portable, evidence-first code-audit instruction pack for heterogeneous repositories and multiple coding agents.
 
 ## Install
+
+Download **Code → Download ZIP**, or run `git clone https://github.com/taimazus/universal-ai-audit.git` and enter the checkout. See the [download and Git update guide (Persian)](docs/installation.md) for complete Windows/Bash commands. To update a clean `main` checkout, run `git pull --ff-only origin main`, then rerun the installer with `-Force` / `--force`; pulling alone does not update installed skills.
 Windows/PowerShell: `./install.ps1 -DryRun` then `./install.ps1`.
 Linux/macOS/WSL: `./install.sh --dry-run` then `./install.sh`.
 Use project-only/global-only and agent selection flags shown by `--help` (shell) or `Get-Help ./install.ps1`.

@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # امنیت
 
 [English](SECURITY.md) · [GitHub Security](https://github.com/taimazus/universal-ai-audit/security)
@@ -9,3 +11,5 @@
 گزارش شامل نسخه/commit، سیستم‌عامل، agent، پیش‌شرط، مسیر و خط، بازتولید امن با دادهٔ dummy و اثر مشاهده‌شده باشد. skill یا installer را برای آزمون روی سرویس زنده یا دادهٔ دیگران بدون مجوز اجرا نکنید.
 
 فایل‌های SKILL.md را به عنوان دستورالعمل قابل اجرا توسط agent بازبینی کنید. نصب سراسری در ماشین محلی خودبه‌خود مجوز انتشار، deployment، ارسال پیام یا تغییر دادهٔ production ایجاد نمی‌کند.
+
+</div>

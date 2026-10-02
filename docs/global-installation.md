@@ -1,18 +1,30 @@
+<div dir="rtl">
+
 # نصب سراسری برای agentها
+
+ابتدا بسته را با ZIP یا Git دریافت کنید؛ [راهنمای دانلود، clone و pull](installation.md) دستورهای کامل Windows و Bash را دارد. اجرای installer از داخل checkout بسته انجام می‌شود. برای ارتقا، پس از pull باید نصب را نیز با Force تکرار کنید؛ pull به‌تنهایی skillهای نصب‌شده را تغییر نمی‌دهد.
 
 از پوشهٔ بسته اجرا کنید. نصب سراسری برای حساب کاربری فعلی است و معمولاً دسترسی administrator نمی‌خواهد؛ این نصب معادل نصب برای همهٔ کاربران سیستم یا session ابری نیست.
 
 ## همهٔ agentهای پشتیبانی‌شده
+
+<div dir="ltr">
 
 ```powershell
 ./install.ps1 -GlobalOnly -Agents all -Skills all -WhatIf
 ./install.ps1 -GlobalOnly -Agents all -Skills all
 ```
 
+</div>
+
+<div dir="ltr">
+
 ```bash
 bash ./install.sh --global-only --agents all --skills all --dry-run
 bash ./install.sh --global-only --agents all --skills all
 ```
+
+</div>
 
 `all` شامل agentهای جدول زیر است. هیچ installer نمی‌تواند discovery در همهٔ محصولات یا نسخه‌ها را تضمین کند. Generic فقط مسیر مشترک Agent Skills را می‌نویسد و برای محصولی که این قرارداد را نمی‌خواند، پشتیبانی native محسوب نمی‌شود.
 
@@ -34,15 +46,23 @@ bash ./install.sh --global-only --agents all --skills all
 
 ## انتخاب چند agent یا چند skill
 
+<div dir="ltr">
+
 ```powershell
 ./install.ps1 -GlobalOnly -Agents codex,claude,cursor,antigravity -Skills all
 ./install.ps1 -GlobalOnly -Agents gemini,copilot,opencode -Skills security-audit,audit-fix-loop
 ```
 
+</div>
+
+<div dir="ltr">
+
 ```bash
 bash ./install.sh --global-only --agents codex,claude,cursor,antigravity --skills all
 bash ./install.sh --global-only --agents gemini,copilot,opencode --skills security-audit,audit-fix-loop
 ```
+
+</div>
 
 نام صحیح گزینه‌ها `claude` و `cursor` است. `cloude` یا `cursour` پذیرفته نمی‌شود. برای نصب در پروژه از project-only و مسیر پروژه استفاده کنید؛ لازم نیست هر پروژه را برای استفاده از skill سراسری تغییر دهید.
 
@@ -66,13 +86,21 @@ security-audit → audit-fix-loop → project-docs → release-readiness را ر
 
 ## مقصد آزمایشی، ارتقا و مهاجرت
 
+<div dir="ltr">
+
 ```powershell
 ./install.ps1 -GlobalOnly -UserHome 'C:/temp/skill-fixture' -Agents all -Skills all
 ```
 
+</div>
+
+<div dir="ltr">
+
 ```bash
 bash ./install.sh --global-only --home '/tmp/skill-fixture' --agents all --skills all
 ```
+
+</div>
 
 این گزینه‌ها فقط ریشهٔ خروجی installer را تغییر می‌دهند؛ تنظیم home یا مسیر discovery محصول را عوض نمی‌کنند. فایل‌های موجود بدون Force حفظ می‌شوند. برای ارتقا ابتدا dry-run سپس `-Force` یا `--force` اجرا کنید. backupها با نام یکتا حفظ می‌شوند.
 
@@ -96,3 +124,5 @@ Windsurf/Cascade در مستندات فعلی به Devin Desktop ارجاع می
 - [Roo Code](https://roocodeinc.github.io/Roo-Code/features/skills/)
 
 مسیرها در ۲۰۲۶-۱۰-۰۲ با این منابع بررسی شده‌اند؛ رفتار هر نسخه و policy سازمانی باید در محیط مقصد تأیید شود.
+
+</div>

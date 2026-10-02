@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 <p align="center"><img src="banner.jpg" alt="Universal AI Enterprise Audit Pack" width="100%"></p>
 
 # بستهٔ ممیزی و مهارت‌های مهندسی چند agent
@@ -8,15 +10,25 @@
 
 ## نصب سراسری
 
+ابتدا بسته را [دانلود یا با Git clone کنید](docs/installation.md). همین راهنما دستورهای `git pull` و نصب مجدد برای ارتقا را نیز دارد؛ دستورهای زیر از پوشهٔ دریافت‌شده اجرا می‌شوند.
+
+<div dir="ltr">
+
 ```powershell
 ./install.ps1 -GlobalOnly -Agents all -Skills all -WhatIf
 ./install.ps1 -GlobalOnly -Agents all -Skills all
 ```
 
+</div>
+
+<div dir="ltr">
+
 ```bash
 bash ./install.sh --global-only --agents all --skills all --dry-run
 bash ./install.sh --global-only --agents all --skills all
 ```
+
+</div>
 
 پشتیبانی native: Codex، Claude Code، Cursor، Antigravity، Gemini CLI، GitHub Copilot ، OpenCode، Windsurf/Cascade، Cline و Roo Code؛ generic برای قرارداد مشترک. نصب حساب کاربری محلی خودبه‌خود به session ابری منتقل نمی‌شود.
 
@@ -45,3 +57,5 @@ security-audit → audit-fix-loop → project-docs → release-readiness را ر
 دستورالعمل کوتاه‌تر تضمین بهترین پاسخ یا نبود تمام باگ‌ها نیست. گزارش agent و خط‌مشی سازمانی را بررسی کنید. تست‌ها رفتار installer را می‌سنجند؛ discovery واقعی محصول باید در محیط هدف تأیید شود.
 
 [GitHub](https://github.com/taimazus/universal-ai-audit) · [CI](https://github.com/taimazus/universal-ai-audit/actions) · [Release](https://github.com/taimazus/universal-ai-audit/releases)
+
+</div>
