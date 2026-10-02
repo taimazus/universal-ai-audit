@@ -1,0 +1,7 @@
+.ai-audit-backup-*/
+.ai-audit/
+*.ai-audit.bak*
+__pycache__/
+*.pyc
+*.log
+.validation-deps/

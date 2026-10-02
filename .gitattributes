@@ -1,0 +1,7 @@
+* text=auto
+*.md text eol=lf
+*.mdc text eol=lf
+*.sh text eol=lf
+*.ps1 text eol=lf
+VERSION text eol=lf
+*.jpg binary
