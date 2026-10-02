@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" || exit 1
-PROJECT="$PWD"; MODE=both; DRY=0; FORCE=0; AGENTS=all; SKILLS=all
+PROJECT="$PWD"; MODE=both; DRY=0; FORCE=0; AGENTS=all; SKILLS=all; USER_HOME="$HOME"
 usage_error(){ printf '%s\n' "$1" >&2; exit 2; }
 select_mode(){
   [[ "$MODE" == both || "$MODE" == "$1" ]] || usage_error '--project-only and --global-only are mutually exclusive.'
@@ -13,13 +13,13 @@ while (($#)); do
     --global-only) select_mode global ;;
     --dry-run) DRY=1 ;;
     --force) FORCE=1 ;;
-    --project|--agents|--skills)
+    --project|--agents|--skills|--home)
       option="$1"
       [[ $# -ge 2 && -n "$2" && "$2" != --* ]] || usage_error "Missing value for $option"
       shift
-      case "$option" in --project) PROJECT="$1";; --agents) AGENTS="$1";; --skills) SKILLS="$1";; esac ;;
+      case "$option" in --project) PROJECT="$1";; --agents) AGENTS="$1";; --skills) SKILLS="$1";; --home) USER_HOME="$1";; esac ;;
     -h|--help)
-      echo 'install.sh [--project-only|--global-only] [--dry-run] [--force] [--project PATH] [--agents all,codex,claude,cursor,copilot,gemini,antigravity,generic]'
+      echo 'install.sh [--project-only|--global-only] [--dry-run] [--force] [--project PATH] [--agents all,codex,claude,cursor,copilot,gemini,antigravity,opencode,windsurf,cline,roo,generic] [--home PATH]'
       echo '  --skills all|none|audit-remediation,security-audit,pr-review,test-gap-analysis,release-readiness,project-docs,audit-fix-loop (default: all)'
       exit 0 ;;
     *) usage_error "Unknown option: $1" ;;
@@ -50,7 +50,7 @@ fi
 IFS=',' read -r -a selected_agents <<< "$AGENTS"
 for agent in "${selected_agents[@]}"; do
   case "$agent" in
-    all|generic|codex|claude|cursor|copilot|gemini|antigravity) ;;
+    all|generic|codex|claude|cursor|copilot|gemini|antigravity|opencode|windsurf|cline|roo) ;;
     *) usage_error "Invalid agent: $agent" ;;
   esac
 done
@@ -59,7 +59,7 @@ AUDIT_SKILL=$'---\nname: enterprise-audit\ndescription: Comprehensive evidence-b
 AGENT="$(cat "$ROOT/AGENTS.md")" || exit 1
 [[ "$CORE" =~ [^[:space:]] && "$AGENT" =~ [^[:space:]] ]] || { echo 'Audit source files must not be empty.' >&2; exit 1; }
 skill_contents=()
-for skill in "${selected_skills[@]}"; do
+for skill in ${selected_skills[@]+"${selected_skills[@]}"}; do
   content="$(cat "$ROOT/.agents/skills/$skill/SKILL.md")" || exit 1
   [[ "$content" =~ [^[:space:]] ]] || { echo "Empty skill source: $skill" >&2; exit 1; }
   skill_contents+=("$content")
@@ -100,8 +100,17 @@ project_install(){
   has antigravity && write_safe "$p/.antigravity/skills/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
   (has codex || has antigravity) && write_safe "$p/.agents/skills/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
   write_safe "$p/core/enterprise-audit.md" "$CORE"
+  local agent dir
+  for agent in claude cursor copilot gemini opencode windsurf cline roo; do
+    has "$agent" || continue
+    case "$agent" in claude) dir=.claude/skills;; cursor) dir=.cursor/skills;; copilot) dir=.github/skills;; gemini) dir=.gemini/skills;; opencode) dir=.opencode/skills;; windsurf) dir=.windsurf/skills;; cline) dir=.cline/skills;; roo) dir=.roo/skills;; esac
+    write_safe "$p/$dir/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
+    for i in ${selected_skills[@]+"${!selected_skills[@]}"}; do
+      write_safe "$p/$dir/${selected_skills[$i]}/SKILL.md" "${skill_contents[$i]}"
+    done
+  done
   local i skill content route
-  for i in "${!selected_skills[@]}"; do
+  for i in ${selected_skills[@]+"${!selected_skills[@]}"}; do
     skill="${selected_skills[$i]}"; content="${skill_contents[$i]}"
     write_safe "$p/core/skills/$skill/SKILL.md" "$content"
     route="# Universal Engineering Skill: $skill"$'\n'"When asked to use $skill, read core/skills/$skill/SKILL.md and follow its scoped workflow."
@@ -116,22 +125,22 @@ project_install(){
 }
 [[ "$MODE" != global ]] && project_install "$PROJECT"
 if [[ "$MODE" != project ]]; then
-  has codex && write_safe "$HOME/.codex/skills/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
-  has claude && write_safe "$HOME/.claude/CLAUDE.md" "$AGENT" 1
-  has cursor && write_safe "$HOME/.cursor/rules/enterprise-audit.mdc" $'---\ndescription: Universal enterprise audit\nalwaysApply: false\n---\n\n'"$CORE"
-  has copilot && write_safe "$HOME/.copilot/instructions/enterprise-audit.instructions.md" $'---\napplyTo: "**/*"\n---\n\n'"$CORE"
-  if has antigravity; then
-    for dir in .antigravity/skills .gemini/config/skills .gemini/antigravity-cli/skills; do write_safe "$HOME/$dir/enterprise-audit/SKILL.md" "$AUDIT_SKILL"; done
-  fi
-  for i in "${!selected_skills[@]}"; do
-    skill="${selected_skills[$i]}"; content="${skill_contents[$i]}"
-    has codex && write_safe "$HOME/.codex/skills/$skill/SKILL.md" "$content"
-    has claude && write_safe "$HOME/.claude/CLAUDE.md" "# Universal Engineering Skill: $skill"$'\n\n'"$content" 1
-    has cursor && write_safe "$HOME/.cursor/rules/$skill.mdc" $'---\ndescription: Use '"$skill"$' for its scoped engineering workflow\nalwaysApply: false\n---\n\n'"$content"
-    has copilot && write_safe "$HOME/.copilot/instructions/$skill.instructions.md" $'---\napplyTo: "**/*"\n---\n\n'"When asked to use $skill, follow this workflow; otherwise these instructions do not apply."$'\n\n'"$content"
-    if has antigravity; then
-      for dir in .antigravity/skills .gemini/config/skills .gemini/antigravity-cli/skills; do write_safe "$HOME/$dir/$skill/SKILL.md" "$content"; done
-    fi
+  global_roots=()
+  (has generic || has codex) && global_roots+=(.agents/skills)
+  has claude && global_roots+=(.claude/skills)
+  has cursor && global_roots+=(.cursor/skills)
+  has copilot && global_roots+=(.copilot/skills)
+  has gemini && global_roots+=(.gemini/skills)
+  has antigravity && global_roots+=(.gemini/config/skills .gemini/antigravity-cli/skills)
+  has opencode && global_roots+=(.config/opencode/skills)
+  has windsurf && global_roots+=(.codeium/windsurf/skills)
+  has cline && global_roots+=(.cline/skills)
+  has roo && global_roots+=(.roo/skills)
+  for dir in ${global_roots[@]+"${global_roots[@]}"}; do
+    write_safe "$USER_HOME/$dir/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
+    for i in ${selected_skills[@]+"${!selected_skills[@]}"}; do
+      write_safe "$USER_HOME/$dir/${selected_skills[$i]}/SKILL.md" "${skill_contents[$i]}"
+    done
   done
 fi
 echo "Changed=$CHANGED Skipped=$SKIPPED Failed=$FAILED"

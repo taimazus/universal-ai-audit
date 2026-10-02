@@ -2,7 +2,7 @@
 
 # Universal AI Enterprise Audit Pack
 
-Version: **1.2.0**. [راهنمای فارسی](docs/README.md) · [مثال همهٔ skillها](docs/skills.md) · [حالت‌های ترکیبی](docs/combinations.md) · [نصب و rollback](docs/installation.md) · [تغییرات](CHANGELOG.md)
+Version: **1.3.0**. [راهنمای فارسی](docs/README.md) · [مثال همهٔ skillها](docs/skills.md) · [حالت‌های ترکیبی](docs/combinations.md) · [نصب و rollback](docs/installation.md) · [تغییرات](CHANGELOG.md)
 
 A portable, evidence-first code-audit instruction pack for heterogeneous repositories and multiple coding agents.
 
@@ -18,7 +18,8 @@ Use project-only/global-only and agent selection flags shown by `--help` (shell)
 - Cursor `.cursor/rules/*.mdc`
 - GitHub Copilot `.github/instructions/*.instructions.md` and user-level Copilot CLI instructions
 - Gemini-compatible GEMINI.md
-- Antigravity-style skill directory (best-effort adapter; verify your installed product's current convention)
+- Antigravity IDE/2.0 and CLI native skills
+- OpenCode native project and user skills
 
 ## Use
 Ask the agent for `/audit-deep`, `/audit-goal`, `enterprise audit`, `deep code audit`, or `ممیزی جامع پروژه`. Agents do not universally implement slash commands; these are semantic triggers, not guaranteed UI commands.
@@ -49,7 +50,19 @@ Installers include all seven by default. Use `-Skills none` / `--skills none` fo
 ./install.sh --project-only --agents codex --skills pr-review,security-audit
 ```
 
-Codex project skills go to `.agents/skills/`; global skills go to `.codex/skills/` in the user home. Cursor, Copilot, and Antigravity receive dedicated adapters. Generic, Claude, and Gemini project instructions link to portable copies in `core/skills/`. Agent selection controls which adapters are written. Global installation uses the existing supported global adapters; it does not add global Generic or Gemini support.
+Native project/global skill locations are supported for Codex, Claude Code, Cursor, Antigravity, Gemini CLI, GitHub Copilot, OpenCode, Windsurf/Cascade, Cline, and Roo Code. Generic writes the shared Agent Skills location. Global installs use individual SKILL.md folders instead of injecting all skill bodies into always-loaded instructions. See the [Persian global installation guide](docs/global-installation.md) for the current path matrix, migration steps, and official references.
+
+```powershell
+./install.ps1 -GlobalOnly -Agents all -Skills all -WhatIf
+./install.ps1 -GlobalOnly -Agents all -Skills all
+```
+
+```bash
+bash ./install.sh --global-only --agents all --skills all --dry-run
+bash ./install.sh --global-only --agents all --skills all
+```
+
+`-UserHome PATH` / `--home PATH` redirects installer output to an isolated fixture; it does not reconfigure an agent. Existing legacy global files remain untouched; review old copies and instruction blocks before removing duplicates. Local user installation does not automatically sync to cloud or remote sessions.
 
 Invoke by name, for example `Use audit-remediation to fix these findings` or `$pr-review` in a skill-aware agent. Review and assessment skills stay read-only unless changes are requested. No skill implicitly authorizes publishing, deployment, or external messages. Product-specific discovery conventions may differ; inspect the installed files in your target agent.
 
@@ -71,5 +84,3 @@ Project installs place the protocol at `core/enterprise-audit.md`, matching the 
 Run `bash tests/install.sh` on Bash, or `powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests/install.ps1` on Windows. Tests use isolated temporary directories and retain fixtures for inspection.
 
 [فارسی](README.fa.md) · [GitHub](https://github.com/taimazus/universal-ai-audit) · [CI](https://github.com/taimazus/universal-ai-audit/actions)
-
-Antigravity compatibility: workspace skills also install to `.agents/skills`; global skills also install to `.gemini/config/skills` and `.gemini/antigravity-cli/skills`. The `.antigravity/skills` adapter remains available.

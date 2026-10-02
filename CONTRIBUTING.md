@@ -1,5 +1,7 @@
 # Contributing to Universal AI Enterprise Audit Pack
 
+[فارسی](CONTRIBUTING.fa.md)
+
 Thank you for helping improve the project.
 
 ## Ways to contribute

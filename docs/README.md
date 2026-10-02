@@ -1,11 +1,15 @@
 # راهنمای بسته
 
-نسخهٔ جاری: `1.2.0`. منبع نسخه: [VERSION](../VERSION).
+نسخهٔ جاری: `1.3.0`. منبع نسخه: [VERSION](../VERSION).
 
 - [نصب و بازیابی](installation.md)
+- [نصب سراسری همهٔ agentهای پشتیبانی‌شده](global-installation.md)
 - [مثال کامل برای هر هشت skill](skills.md)
 - [ترکیب skillها و انتقال یافته‌ها](combinations.md)
 - [تست و نگهداری](maintenance.md)
-- [تغییرات نسخه](../CHANGELOG.md)
+- [تغییرات فارسی](../CHANGELOG.fa.md)
+- [مشارکت فارسی](../CONTRIBUTING.fa.md)
+- [امنیت فارسی](../SECURITY.fa.md)
+- [مجوز فارسی](../LICENSE.fa.md)
 
 برای شروع، بسته را در پروژهٔ مقصد نصب کنید و نام skill و دامنهٔ کار را در پیام مشخص کنید. نام‌ها trigger معنایی‌اند؛ وجود slash command در رابط کاربری تضمین نشده است. دستورهای این راهنما فایل‌ها را محلی می‌سازند؛ انتشار Wiki، push و deployment کار جداگانه‌اند.

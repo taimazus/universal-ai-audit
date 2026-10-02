@@ -64,4 +64,20 @@ expect_status 2 run --skills
 cp "$ROOT/core/enterprise-audit.md" "$T/incomplete/core/enterprise-audit.md"
 expect_status 1 bash "$T/incomplete/install.sh" --project-only --project "$T/missing" --skills pr-review
 [[ ! -e "$T/missing" ]]
+bash "$ROOT/install.sh" --global-only --home "$T/global-home" --dry-run
+[[ ! -e "$T/global-home" ]]
+bash "$ROOT/install.sh" --global-only --home "$T/global-home"
+for dir in .agents/skills .claude/skills .cursor/skills .copilot/skills .gemini/skills .gemini/config/skills .gemini/antigravity-cli/skills .config/opencode/skills .codeium/windsurf/skills .cline/skills .roo/skills; do
+  grep -q '^name: enterprise-audit$' "$T/global-home/$dir/enterprise-audit/SKILL.md"
+  for skill in audit-remediation security-audit pr-review test-gap-analysis release-readiness project-docs audit-fix-loop; do
+    cmp "$ROOT/.agents/skills/$skill/SKILL.md" "$T/global-home/$dir/$skill/SKILL.md"
+  done
+done
+[[ ! -e "$T/global-home/.claude/CLAUDE.md" ]]
+before="$(find "$T/global-home" -type f -exec cksum {} \;)"
+bash "$ROOT/install.sh" --global-only --home "$T/global-home"
+[[ "$before" == "$(find "$T/global-home" -type f -exec cksum {} \;)" ]]
+bash "$ROOT/install.sh" --global-only --home "$T/global-selected" --agents claude --skills pr-review
+[[ -f "$T/global-selected/.claude/skills/pr-review/SKILL.md" && ! -e "$T/global-selected/.cursor" ]]
+expect_status 2 run --home
 echo 'PASS: Bash installer regressions'

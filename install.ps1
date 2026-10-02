@@ -5,10 +5,11 @@ param(
   [switch]$DryRun,
   [switch]$Force,
   [string]$ProjectPath = (Get-Location).ProviderPath,
-  [ValidateSet('all','generic','codex','claude','cursor','copilot','gemini','antigravity')]
+  [ValidateSet('all','generic','codex','claude','cursor','copilot','gemini','antigravity','opencode','windsurf','cline','roo')]
   [string[]]$Agents = @('all'),
   [ValidateSet('all','none','audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop')]
-  [string[]]$Skills = @('all')
+  [string[]]$Skills = @('all'),
+  [string]$UserHome = [Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)
 )
 $ErrorActionPreference='Stop'
 if($GlobalOnly -and $ProjectOnly){ throw '-GlobalOnly and -ProjectOnly are mutually exclusive.' }
@@ -27,9 +28,10 @@ foreach($name in $SelectedSkills){
   if([string]::IsNullOrWhiteSpace($content)){throw "Empty skill source: $name"}
   $SkillContents[$name]=$content
 }
-$HomeDir=[Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)
+$HomeDir=if($ProjectOnly){[IO.Path]::GetFullPath($ProjectPath)}else{[IO.Path]::GetFullPath($UserHome)}
+if($GlobalOnly){$ProjectPath=$HomeDir}
 $BackupRoot=Join-Path $ProjectPath ('.ai-audit-backup-' + [guid]::NewGuid().ToString('N'))
-$Selected = if($Agents -contains 'all'){@('generic','codex','claude','cursor','copilot','gemini','antigravity')}else{$Agents}
+$Selected = if($Agents -contains 'all'){@('generic','codex','claude','cursor','copilot','gemini','antigravity','opencode','windsurf','cline','roo')}else{$Agents}
 $Changed=0; $Skipped=0; $Failed=0
 function Write-Safe([string]$Path,[string]$Content,[switch]$Append){
   try{
@@ -63,6 +65,14 @@ function ProjectInstall([string]$P){
   if($Selected -contains 'antigravity'){Write-Safe (Join-Path $P '.antigravity/skills/enterprise-audit/SKILL.md') $AuditSkill}
   if($Selected -contains 'codex' -or $Selected -contains 'antigravity'){Write-Safe (Join-Path $P '.agents/skills/enterprise-audit/SKILL.md') $AuditSkill}
   Write-Safe (Join-Path $P 'core/enterprise-audit.md') $Core
+  $NativeRoots=@{claude='.claude/skills';cursor='.cursor/skills';copilot='.github/skills';gemini='.gemini/skills';opencode='.opencode/skills';windsurf='.windsurf/skills';cline='.cline/skills';roo='.roo/skills'}
+  foreach($agent in $Selected){
+    if($NativeRoots.ContainsKey($agent)){
+      $dir=$NativeRoots[$agent]
+      Write-Safe (Join-Path $P "$dir/enterprise-audit/SKILL.md") $AuditSkill
+      foreach($name in $SelectedSkills){Write-Safe (Join-Path $P "$dir/$name/SKILL.md") $SkillContents[$name]}
+    }
+  }
   foreach($name in $SelectedSkills){
     $content=$SkillContents[$name]
     Write-Safe (Join-Path $P "core/skills/$name/SKILL.md") $content
@@ -78,20 +88,16 @@ function ProjectInstall([string]$P){
 }
 if(-not $GlobalOnly){ProjectInstall ([IO.Path]::GetFullPath($ProjectPath))}
 if(-not $ProjectOnly){
-  if($Selected -contains 'codex'){Write-Safe (Join-Path $HomeDir '.codex/skills/enterprise-audit/SKILL.md') $AuditSkill}
-  if($Selected -contains 'claude'){Write-Safe (Join-Path $HomeDir '.claude/CLAUDE.md') $AgentText -Append}
-  if($Selected -contains 'cursor'){Write-Safe (Join-Path $HomeDir '.cursor/rules/enterprise-audit.mdc') ("---`ndescription: Universal enterprise audit`nalwaysApply: false`n---`n`n"+$Core)}
-  if($Selected -contains 'copilot'){Write-Safe (Join-Path $HomeDir '.copilot/instructions/enterprise-audit.instructions.md') ("---`napplyTo: '**/*'`n---`n`n"+$Core)}
-  if($Selected -contains 'antigravity'){
-    foreach($dir in '.antigravity/skills','.gemini/config/skills','.gemini/antigravity-cli/skills'){Write-Safe (Join-Path $HomeDir "$dir/enterprise-audit/SKILL.md") $AuditSkill}
+  $GlobalRoots=@{
+    generic=@('.agents/skills'); codex=@('.agents/skills'); claude=@('.claude/skills')
+    cursor=@('.cursor/skills'); copilot=@('.copilot/skills'); gemini=@('.gemini/skills')
+    antigravity=@('.gemini/config/skills','.gemini/antigravity-cli/skills')
+    opencode=@('.config/opencode/skills');windsurf=@('.codeium/windsurf/skills');cline=@('.cline/skills');roo=@('.roo/skills')
   }
-  foreach($name in $SelectedSkills){
-    $content=$SkillContents[$name]
-    if($Selected -contains 'codex'){Write-Safe (Join-Path $HomeDir ".codex/skills/$name/SKILL.md") $content}
-    if($Selected -contains 'claude'){Write-Safe (Join-Path $HomeDir '.claude/CLAUDE.md') ("# Universal Engineering Skill: $name`n`n"+$content) -Append}
-    if($Selected -contains 'cursor'){Write-Safe (Join-Path $HomeDir ".cursor/rules/$name.mdc") ("---`ndescription: Use $name for its scoped engineering workflow`nalwaysApply: false`n---`n`n"+$content)}
-    if($Selected -contains 'copilot'){Write-Safe (Join-Path $HomeDir ".copilot/instructions/$name.instructions.md") ("---`napplyTo: '**/*'`n---`n`nWhen asked to use $name, follow this workflow; otherwise these instructions do not apply.`n`n"+$content)}
-    if($Selected -contains 'antigravity'){foreach($dir in '.antigravity/skills','.gemini/config/skills','.gemini/antigravity-cli/skills'){Write-Safe (Join-Path $HomeDir "$dir/$name/SKILL.md") $content}}
+  $Destinations=@($Selected | ForEach-Object {$GlobalRoots[$_]} | Select-Object -Unique)
+  foreach($dir in $Destinations){
+    Write-Safe (Join-Path $HomeDir "$dir/enterprise-audit/SKILL.md") $AuditSkill
+    foreach($name in $SelectedSkills){Write-Safe (Join-Path $HomeDir "$dir/$name/SKILL.md") $SkillContents[$name]}
   }
 }
 Write-Host "Changed=$Changed Skipped=$Skipped Failed=$Failed"

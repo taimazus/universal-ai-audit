@@ -1,3 +1,14 @@
+# Changelog
+
+[فارسی](CHANGELOG.fa.md)
+
+## 1.3.0 — 2026-10-02
+
+- Native global skills for Codex, Claude Code, Cursor, Antigravity, Gemini CLI, Copilot, OpenCode, Windsurf/Cascade, Cline and Roo Code.
+- Isolated user-home override and global installation regressions; no always-loaded global skill injection.
+- Bash 3.2 empty-array fix based on macOS CI failure.
+- Persian documentation counterparts and current official path references.
+
 # تغییرات
 
 ## 1.2.0 — ۲۰۲۶-۱۰-۰۲

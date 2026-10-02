@@ -40,15 +40,7 @@ bash ./install.sh --project-only --skills none
 
 `all` پیش‌فرض شامل هفت skill تکمیلی است؛ `enterprise-audit` همیشه جزو بستهٔ پایه است. `none` فقط skillهای تکمیلی را غیرفعال می‌کند. `none` با نام دیگر قابل ترکیب نیست. انتخاب skill نصب قبلی را حذف نمی‌کند. گزینهٔ project-only و global-only با هم معتبر نیستند.
 
-| agent | پروژه | سراسری |
-| --- | --- | --- |
-| generic | AGENTS.md و core/skills | ندارد |
-| codex | AGENTS.md و .agents/skills | .codex/skills |
-| claude | CLAUDE.md و core/skills | .claude/CLAUDE.md |
-| gemini | GEMINI.md و core/skills | ندارد |
-| cursor | .cursor/rules | .cursor/rules در home |
-| copilot | .github/instructions | .copilot/instructions در home |
-| antigravity | .antigravity/skills | .antigravity/skills در home |
+مسیرهای native و سراسری در [جدول نصب سراسری](global-installation.md) آمده‌اند. همهٔ هشت skill برای agentهای این جدول قابل نصب‌اند؛ generic قرارداد مشترک را تولید می‌کند و discovery آن وابسته به محصول است.
 
 پروتکل پایه در `core/enterprise-audit.md` نصب می‌شود. adapterها قرارداد فایل تولید می‌کنند؛ بارگذاری خودکار در هر محصول باید در محیط همان محصول بررسی شود. installer راهنماهای انسانی docs را به پروژهٔ مقصد کپی نمی‌کند؛ آن‌ها در این بسته قرار دارند.
 
@@ -71,5 +63,3 @@ bash ./install.sh --project-only --project '/work/my-project' --force
 PowerShell backupها را در `.ai-audit-backup-<id>` زیر ProjectPath و Bash کنار فایل با پسوند `.ai-audit.bak.<id>` نگه می‌دارد. چند نسخهٔ backup یک فایل ممکن است مربوط به مراحل append همان نصب باشند؛ نسخهٔ پیش از نصب را با بررسی محتوا انتخاب کنید. حتی در global-only محل backup در PowerShell به ProjectPath وابسته است.
 
 فایل موردنظر را پس از بررسی از backup برگردانید. فایل تازه‌ساخته‌شده backup ندارد؛ فقط همان مسیرهای تولیدشده را پس از بررسی حذف کنید. این بسته uninstall خودکار ندارد. rollback تغییرات کد یا دادهٔ پروژهٔ هدف با بازگرداندن فایل skill انجام نمی‌شود.
-
-Antigravity compatibility: workspace skills also install to `.agents/skills`; global skills also install to `.gemini/config/skills` and `.gemini/antigravity-cli/skills`. The `.antigravity/skills` adapter remains available.

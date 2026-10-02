@@ -58,4 +58,22 @@ $ErrorActionPreference='Continue'
 & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $Installer -ProjectOnly -ProjectPath $Only -Skills invalid 2>&1 | Out-Null
 $ErrorActionPreference='Stop'
 Assert ($LASTEXITCODE -ne 0) 'Invalid skill accepted.'
+$Global=Join-Path $Temp 'global-home'
+Run-Installer @('-GlobalOnly','-UserHome',$Global,'-Skills','all','-WhatIf')
+Assert (-not(Test-Path $Global)) 'Global WhatIf wrote files.'
+Run-Installer @('-GlobalOnly','-UserHome',$Global,'-Skills','all')
+foreach($dir in '.agents/skills','.claude/skills','.cursor/skills','.copilot/skills','.gemini/skills','.gemini/config/skills','.gemini/antigravity-cli/skills','.config/opencode/skills','.codeium/windsurf/skills','.cline/skills','.roo/skills'){
+  Assert (Test-Path (Join-Path $Global "$dir/enterprise-audit/SKILL.md")) 'Global base skill missing.'
+  foreach($name in 'audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop'){
+    Assert ((Get-FileHash (Join-Path $Global "$dir/$name/SKILL.md")).Hash -eq (Get-FileHash (Join-Path $Root ".agents/skills/$name/SKILL.md")).Hash) 'Global skill mismatch.'
+  }
+}
+Assert (-not(Test-Path (Join-Path $Global '.claude/CLAUDE.md'))) 'Global install created always-loaded instruction text.'
+$Count=@(Get-ChildItem $Global -Recurse -Force).Count
+Run-Installer @('-GlobalOnly','-UserHome',$Global,'-Skills','all')
+Assert (@(Get-ChildItem $Global -Recurse -Force).Count -eq $Count) 'Repeated global install created extra files.'
+$GlobalSelected=Join-Path $Temp 'global-selected'
+Run-Installer @('-GlobalOnly','-UserHome',$GlobalSelected,'-Agents','claude','-Skills','pr-review')
+Assert (Test-Path (Join-Path $GlobalSelected '.claude/skills/pr-review/SKILL.md')) 'Selected global skill missing.'
+Assert (-not(Test-Path (Join-Path $GlobalSelected '.cursor'))) 'Unselected global agent installed.'
 Write-Output 'PASS: PowerShell installer regressions'

@@ -9,7 +9,7 @@ bash -n install.sh
 bash tests/install.sh
 ```
 
-تست‌ها مقصد موقت می‌سازند و fixtureها را برای بررسی نگه می‌دارند. نصب global واقعی اجرا نمی‌شود. موفقیت این تست‌ها رفتار installer را تأیید می‌کند؛ کیفیت پاسخ همهٔ مدل‌ها یا discovery واقعی محصولات مقصد را اثبات نمی‌کند.
+تست‌ها مقصد موقت می‌سازند و fixtureها را برای بررسی نگه می‌دارند. نصب global در home موقت با UserHome / --home اجرا می‌شود و به home واقعی کاربر دست نمی‌زند. همهٔ مسیرهای native، انتخاب agent/skill و نصب تکراری بررسی می‌شوند. موفقیت این تست‌ها رفتار installer را تأیید می‌کند؛ کیفیت پاسخ همهٔ مدل‌ها یا discovery واقعی محصولات مقصد را اثبات نمی‌کند.
 
 منبع هفت skill تکمیلی `.agents/skills/<name>/SKILL.md` و منبع پروتکل پایه `core/enterprise-audit.md` است. نسخهٔ enterprise-audit در مسیرهای skill باید frontmatter شامل name و description داشته باشد. adapterهای Antigravity موجود باید با منبع متناظر همگام شوند. تغییر فهرست skillها باید در هر دو installer، help، تست‌ها و راهنما منعکس شود.
 

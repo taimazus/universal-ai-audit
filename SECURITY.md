@@ -1,5 +1,7 @@
 # Security Policy
 
+[فارسی](SECURITY.fa.md)
+
 ## Supported version
 
 Security fixes are targeted at the latest published release and the current `main` branch.
