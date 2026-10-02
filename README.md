@@ -80,6 +80,8 @@ For repeated repair and review, ask: `Use audit-fix-loop to fix all reported fin
 The protocol requires evidence classes, exact source locations when available, no fabricated vulnerabilities/benchmarks, and explicit coverage gaps.
 
 ## Distribution
+For installation results, temporary checkout/bootstrap cleanup, backups, and GitHub CLI login examples, see the [Persian post-installation guide](docs/post-installation.md). Keep installed skill directories; temporary source checkouts are separate from installation destinations.
+
 Review the generated files before committing them. Existing instruction files are preserved/append-only where appropriate; generated dedicated rule files require `--force` / `-Force` to replace. Backups are created when replacement occurs.
 
 Project installs place the protocol at `core/enterprise-audit.md`, matching the instruction files. Previous `.ai-audit/core` copies are left in place. Backups use unique names so repeated replacements preserve earlier versions. PowerShell supports both `-DryRun` and `-WhatIf` without changing files.

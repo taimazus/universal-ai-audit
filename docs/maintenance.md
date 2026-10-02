@@ -2,6 +2,8 @@
 
 # تست و نگهداری
 
+برای تفسیر Changed/Skipped/Failed، حذف fixtureهای تست و checkout موقت و نگهداری backupها، [راهنمای پس از نصب](post-installation.md) را بخوانید. حذف فایل‌های موقت با حذف skillهای نصب‌شده متفاوت است.
+
 <div dir="ltr">
 
 ```powershell

@@ -2,6 +2,8 @@
 
 # نصب، به‌روزرسانی و بازیابی
 
+پس از نصب، [راهنمای بررسی خروجی و پاک‌سازی](post-installation.md) را برای حذف checkout موقت و فایل bootstrap، حفظ مسیرهای ضروری و بررسی ورود GitHub CLI بخوانید.
+
 ## دریافت بسته برای اولین نصب
 
 ### نصب‌کننده‌ای که خودش از Git دریافت می‌کند
@@ -237,7 +239,7 @@ bash ./install.sh --project-only --project '/work/my-project' --force
 
 ## بازیابی
 
-PowerShell backupها را در `.ai-audit-backup-<id>` زیر ProjectPath و Bash کنار فایل با پسوند `.ai-audit.bak.<id>` نگه می‌دارد. چند نسخهٔ backup یک فایل ممکن است مربوط به مراحل append همان نصب باشند؛ نسخهٔ پیش از نصب را با بررسی محتوا انتخاب کنید. حتی در global-only محل backup در PowerShell به ProjectPath وابسته است.
+PowerShell backupها را در `.ai-audit-backup-<id>` زیر ProjectPath و Bash کنار فایل با پسوند `.ai-audit.bak.<id>` نگه می‌دارد. چند نسخهٔ backup یک فایل ممکن است مربوط به مراحل append همان نصب باشند؛ نسخهٔ پیش از نصب را با بررسی محتوا انتخاب کنید. در global-only، PowerShell محل backup را زیر UserHome قرار می‌دهد.
 
 فایل موردنظر را پس از بررسی از backup برگردانید. فایل تازه‌ساخته‌شده backup ندارد؛ فقط همان مسیرهای تولیدشده را پس از بررسی حذف کنید. این بسته uninstall خودکار ندارد. rollback تغییرات کد یا دادهٔ پروژهٔ هدف با بازگرداندن فایل skill انجام نمی‌شود.
 

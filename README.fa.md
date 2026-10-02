@@ -46,6 +46,8 @@ bash ./install.sh --global-only --agents all --skills all
 
 ## استفاده
 
+پس از نصب، [راهنمای بررسی خروجی و پاک‌سازی](docs/post-installation.md) توضیح می‌دهد کدام فایل‌ها موقت‌اند، کدام مسیرها باید حفظ شوند و چگونه وضعیت GitHub CLI را بررسی کنید.
+
 ```text
 security-audit → audit-fix-loop → project-docs → release-readiness را روی این پروژه اجرا کن.
 نقص‌های تأییدشده را اصلاح و تست کن، مستندات را هماهنگ کن و یک گزارش فارسی بده.

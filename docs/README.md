@@ -5,6 +5,7 @@
 نسخهٔ جاری: `1.4.0`. منبع نسخه: [VERSION](../VERSION).
 
 - [نصب و بازیابی](installation.md)
+- [بررسی خروجی و پاک‌سازی پس از نصب](post-installation.md)
 - [نصب سراسری همهٔ agentهای پشتیبانی‌شده](global-installation.md)
 - [مثال کامل برای هر ده skill](skills.md)
 - [ترکیب skillها و انتقال یافته‌ها](combinations.md)
