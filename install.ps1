@@ -61,7 +61,7 @@ function ProjectInstall([string]$P){
   if($Selected -contains 'cursor'){$mdc="---`ndescription: Universal evidence-based enterprise code audit protocol`nalwaysApply: false`n---`n`n$Core"; Write-Safe (Join-Path $P '.cursor/rules/enterprise-audit.mdc') $mdc}
   if($Selected -contains 'copilot'){Write-Safe (Join-Path $P '.github/instructions/enterprise-audit.instructions.md') ("---`napplyTo: '**/*'`n---`n`n"+$Core)}
   if($Selected -contains 'antigravity'){Write-Safe (Join-Path $P '.antigravity/skills/enterprise-audit/SKILL.md') $AuditSkill}
-  if($Selected -contains 'codex'){Write-Safe (Join-Path $P '.agents/skills/enterprise-audit/SKILL.md') $AuditSkill}
+  if($Selected -contains 'codex' -or $Selected -contains 'antigravity'){Write-Safe (Join-Path $P '.agents/skills/enterprise-audit/SKILL.md') $AuditSkill}
   Write-Safe (Join-Path $P 'core/enterprise-audit.md') $Core
   foreach($name in $SelectedSkills){
     $content=$SkillContents[$name]
@@ -70,7 +70,7 @@ function ProjectInstall([string]$P){
     if($Selected -contains 'generic' -or $Selected -contains 'codex'){Write-Safe (Join-Path $P 'AGENTS.md') $route -Append}
     if($Selected -contains 'claude'){Write-Safe (Join-Path $P 'CLAUDE.md') $route -Append}
     if($Selected -contains 'gemini'){Write-Safe (Join-Path $P 'GEMINI.md') $route -Append}
-    if($Selected -contains 'codex'){Write-Safe (Join-Path $P ".agents/skills/$name/SKILL.md") $content}
+    if($Selected -contains 'codex' -or $Selected -contains 'antigravity'){Write-Safe (Join-Path $P ".agents/skills/$name/SKILL.md") $content}
     if($Selected -contains 'cursor'){Write-Safe (Join-Path $P ".cursor/rules/$name.mdc") ("---`ndescription: Use $name for its scoped engineering workflow`nalwaysApply: false`n---`n`n"+$content)}
     if($Selected -contains 'copilot'){Write-Safe (Join-Path $P ".github/instructions/$name.instructions.md") ("---`napplyTo: '**/*'`n---`n`nWhen asked to use $name, follow this workflow; otherwise these instructions do not apply.`n`n"+$content)}
     if($Selected -contains 'antigravity'){Write-Safe (Join-Path $P ".antigravity/skills/$name/SKILL.md") $content}
@@ -82,14 +82,16 @@ if(-not $ProjectOnly){
   if($Selected -contains 'claude'){Write-Safe (Join-Path $HomeDir '.claude/CLAUDE.md') $AgentText -Append}
   if($Selected -contains 'cursor'){Write-Safe (Join-Path $HomeDir '.cursor/rules/enterprise-audit.mdc') ("---`ndescription: Universal enterprise audit`nalwaysApply: false`n---`n`n"+$Core)}
   if($Selected -contains 'copilot'){Write-Safe (Join-Path $HomeDir '.copilot/instructions/enterprise-audit.instructions.md') ("---`napplyTo: '**/*'`n---`n`n"+$Core)}
-  if($Selected -contains 'antigravity'){Write-Safe (Join-Path $HomeDir '.antigravity/skills/enterprise-audit/SKILL.md') $AuditSkill}
+  if($Selected -contains 'antigravity'){
+    foreach($dir in '.antigravity/skills','.gemini/config/skills','.gemini/antigravity-cli/skills'){Write-Safe (Join-Path $HomeDir "$dir/enterprise-audit/SKILL.md") $AuditSkill}
+  }
   foreach($name in $SelectedSkills){
     $content=$SkillContents[$name]
     if($Selected -contains 'codex'){Write-Safe (Join-Path $HomeDir ".codex/skills/$name/SKILL.md") $content}
     if($Selected -contains 'claude'){Write-Safe (Join-Path $HomeDir '.claude/CLAUDE.md') ("# Universal Engineering Skill: $name`n`n"+$content) -Append}
     if($Selected -contains 'cursor'){Write-Safe (Join-Path $HomeDir ".cursor/rules/$name.mdc") ("---`ndescription: Use $name for its scoped engineering workflow`nalwaysApply: false`n---`n`n"+$content)}
     if($Selected -contains 'copilot'){Write-Safe (Join-Path $HomeDir ".copilot/instructions/$name.instructions.md") ("---`napplyTo: '**/*'`n---`n`nWhen asked to use $name, follow this workflow; otherwise these instructions do not apply.`n`n"+$content)}
-    if($Selected -contains 'antigravity'){Write-Safe (Join-Path $HomeDir ".antigravity/skills/$name/SKILL.md") $content}
+    if($Selected -contains 'antigravity'){foreach($dir in '.antigravity/skills','.gemini/config/skills','.gemini/antigravity-cli/skills'){Write-Safe (Join-Path $HomeDir "$dir/$name/SKILL.md") $content}}
   }
 }
 Write-Host "Changed=$Changed Skipped=$Skipped Failed=$Failed"

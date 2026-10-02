@@ -1,6 +1,6 @@
 # تغییرات
 
-## 1.1.0 — ۲۰۲۶-۱۰-۰۲
+## 1.2.0 — ۲۰۲۶-۱۰-۰۲
 
 - هشت skill برای ممیزی، اصلاح، امنیت، PR، تست، انتشار، مستندات و حلقهٔ اصلاح.
 - دستورالعمل‌های فشرده با انتقال مشترک یافته‌ها و گزارش یکپارچه در ترکیب‌ها.
@@ -10,3 +10,28 @@
 - تست‌های regression در PowerShell و Bash.
 
 حجم متن هشت SKILL.md از ۲۸٬۸۲۷ به ۱۷٬۰۲۳ کاراکتر کاهش یافت (حدود ۴۱٪). این معیار معادل تعداد توکن یا تضمین کیفیت مدل نیست؛ صرفه‌جویی واقعی به tokenizer و دامنهٔ کار بستگی دارد.
+
+## [1.1.0] - 2026-10-01
+
+### Added
+- Full Persian documentation in `README.fa.md`.
+- English/Persian language navigation.
+- GitHub Actions CI across Windows, Ubuntu, and macOS.
+- PowerShell parser validation and installer dry-run smoke tests.
+- Antigravity workspace installation smoke test.
+- Package/version metadata validation.
+
+### Changed
+- Google Antigravity integration now uses current skill locations:
+  - Workspace: `.agents/skills/enterprise-audit/SKILL.md`
+  - IDE/global: `~/.gemini/config/skills/enterprise-audit/SKILL.md`
+  - CLI/global: `~/.gemini/antigravity-cli/skills/enterprise-audit/SKILL.md`
+- Windows documentation now explains `Unblock-File` and Execution Policy behavior.
+
+### Notes
+- Existing project/global instruction files continue to be preserved where appropriate.
+- `/enterprise-audit` is the explicit Antigravity skill invocation; behavior of slash commands in other agents varies by product.
+
+## [1.0.0]
+
+- Initial public release of the universal multi-agent enterprise code-audit pack.

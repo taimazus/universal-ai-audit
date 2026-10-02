@@ -98,7 +98,7 @@ project_install(){
   has cursor && write_safe "$p/.cursor/rules/enterprise-audit.mdc" $'---\ndescription: Universal evidence-based enterprise code audit protocol\nalwaysApply: false\n---\n\n'"$CORE"
   has copilot && write_safe "$p/.github/instructions/enterprise-audit.instructions.md" $'---\napplyTo: "**/*"\n---\n\n'"$CORE"
   has antigravity && write_safe "$p/.antigravity/skills/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
-  has codex && write_safe "$p/.agents/skills/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
+  (has codex || has antigravity) && write_safe "$p/.agents/skills/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
   write_safe "$p/core/enterprise-audit.md" "$CORE"
   local i skill content route
   for i in "${!selected_skills[@]}"; do
@@ -108,7 +108,7 @@ project_install(){
     (has generic || has codex) && write_safe "$p/AGENTS.md" "$route" 1
     has claude && write_safe "$p/CLAUDE.md" "$route" 1
     has gemini && write_safe "$p/GEMINI.md" "$route" 1
-    has codex && write_safe "$p/.agents/skills/$skill/SKILL.md" "$content"
+    (has codex || has antigravity) && write_safe "$p/.agents/skills/$skill/SKILL.md" "$content"
     has cursor && write_safe "$p/.cursor/rules/$skill.mdc" $'---\ndescription: Use '"$skill"$' for its scoped engineering workflow\nalwaysApply: false\n---\n\n'"$content"
     has copilot && write_safe "$p/.github/instructions/$skill.instructions.md" $'---\napplyTo: "**/*"\n---\n\n'"When asked to use $skill, follow this workflow; otherwise these instructions do not apply."$'\n\n'"$content"
     has antigravity && write_safe "$p/.antigravity/skills/$skill/SKILL.md" "$content"
@@ -120,14 +120,18 @@ if [[ "$MODE" != project ]]; then
   has claude && write_safe "$HOME/.claude/CLAUDE.md" "$AGENT" 1
   has cursor && write_safe "$HOME/.cursor/rules/enterprise-audit.mdc" $'---\ndescription: Universal enterprise audit\nalwaysApply: false\n---\n\n'"$CORE"
   has copilot && write_safe "$HOME/.copilot/instructions/enterprise-audit.instructions.md" $'---\napplyTo: "**/*"\n---\n\n'"$CORE"
-  has antigravity && write_safe "$HOME/.antigravity/skills/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
+  if has antigravity; then
+    for dir in .antigravity/skills .gemini/config/skills .gemini/antigravity-cli/skills; do write_safe "$HOME/$dir/enterprise-audit/SKILL.md" "$AUDIT_SKILL"; done
+  fi
   for i in "${!selected_skills[@]}"; do
     skill="${selected_skills[$i]}"; content="${skill_contents[$i]}"
     has codex && write_safe "$HOME/.codex/skills/$skill/SKILL.md" "$content"
     has claude && write_safe "$HOME/.claude/CLAUDE.md" "# Universal Engineering Skill: $skill"$'\n\n'"$content" 1
     has cursor && write_safe "$HOME/.cursor/rules/$skill.mdc" $'---\ndescription: Use '"$skill"$' for its scoped engineering workflow\nalwaysApply: false\n---\n\n'"$content"
     has copilot && write_safe "$HOME/.copilot/instructions/$skill.instructions.md" $'---\napplyTo: "**/*"\n---\n\n'"When asked to use $skill, follow this workflow; otherwise these instructions do not apply."$'\n\n'"$content"
-    has antigravity && write_safe "$HOME/.antigravity/skills/$skill/SKILL.md" "$content"
+    if has antigravity; then
+      for dir in .antigravity/skills .gemini/config/skills .gemini/antigravity-cli/skills; do write_safe "$HOME/$dir/$skill/SKILL.md" "$content"; done
+    fi
   done
 fi
 echo "Changed=$CHANGED Skipped=$SKIPPED Failed=$FAILED"

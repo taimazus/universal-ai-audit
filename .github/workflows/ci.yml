@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  powershell:
+    name: PowerShell (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Parse install.ps1
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Join-Path $PWD 'install.ps1'),
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }
+
+      - name: Dry-run all adapters
+        shell: pwsh
+        run: ./install.ps1 -DryRun -ProjectOnly -ProjectPath "$PWD"
+
+      - name: Smoke-test Antigravity workspace install
+        shell: pwsh
+        run: |
+          $target = Join-Path $env:RUNNER_TEMP 'audit-fixture'
+          New-Item -ItemType Directory -Path $target -Force | Out-Null
+          ./install.ps1 -ProjectOnly -Agents antigravity -ProjectPath $target
+          $skill = Join-Path $target '.agents/skills/enterprise-audit/SKILL.md'
+          if (-not (Test-Path -LiteralPath $skill -PathType Leaf)) {
+            throw "Antigravity skill was not created: $skill"
+          }
+          if ((Get-Item -LiteralPath $skill).Length -eq 0) {
+            throw 'Antigravity SKILL.md is empty.'
+          }
+
+      - name: Windows installer regressions
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests/install.ps1
+
+  shell-installer:
+    name: Shell installer (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Syntax check
+        shell: bash
+        run: bash -n ./install.sh
+      - name: Dry run
+        shell: bash
+        run: bash ./install.sh --dry-run
+
+      - name: Installer regressions
+        shell: bash
+        run: bash tests/install.sh
+
+  metadata:
+    name: Package metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Validate required files and version
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s README.md
+          test -s README.fa.md
+          test -s VERSION
+          test -s core/enterprise-audit.md
+          test -s install.ps1
+          test -s install.sh
+          grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' VERSION
+          test "$(tr -d '\r\n' < VERSION)" = "1.2.0"

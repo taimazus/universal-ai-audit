@@ -1,6 +1,8 @@
+<p align="center"><img src="banner.jpg" alt="Universal AI Enterprise Audit Pack" width="100%"></p>
+
 # Universal AI Enterprise Audit Pack
 
-Version: **1.1.0**. [راهنمای فارسی](docs/README.md) · [مثال همهٔ skillها](docs/skills.md) · [حالت‌های ترکیبی](docs/combinations.md) · [نصب و rollback](docs/installation.md) · [تغییرات](CHANGELOG.md)
+Version: **1.2.0**. [راهنمای فارسی](docs/README.md) · [مثال همهٔ skillها](docs/skills.md) · [حالت‌های ترکیبی](docs/combinations.md) · [نصب و rollback](docs/installation.md) · [تغییرات](CHANGELOG.md)
 
 A portable, evidence-first code-audit instruction pack for heterogeneous repositories and multiple coding agents.
 
@@ -67,3 +69,7 @@ Project installs place the protocol at `core/enterprise-audit.md`, matching the 
 
 ## Installer regression tests
 Run `bash tests/install.sh` on Bash, or `powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests/install.ps1` on Windows. Tests use isolated temporary directories and retain fixtures for inspection.
+
+[فارسی](README.fa.md) · [GitHub](https://github.com/taimazus/universal-ai-audit) · [CI](https://github.com/taimazus/universal-ai-audit/actions)
+
+Antigravity compatibility: workspace skills also install to `.agents/skills`; global skills also install to `.gemini/config/skills` and `.gemini/antigravity-cli/skills`. The `.antigravity/skills` adapter remains available.
