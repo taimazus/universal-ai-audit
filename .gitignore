@@ -5,3 +5,9 @@ __pycache__/
 *.pyc
 *.log
 .validation-deps/
+
+# Local transactional task memory is not a release artifact.
+.ai-work/*.sqlite3*
+
+# Per-project answers and execution journals stay local.
+.ai-work/

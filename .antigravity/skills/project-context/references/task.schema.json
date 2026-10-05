@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Task checkpoint version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "goal",
+    "scope",
+    "status",
+    "acceptance",
+    "decisions",
+    "changed_paths",
+    "checks",
+    "blockers",
+    "next_action"
+  ],
+  "properties": {
+    "goal": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20000,
+      "pattern": "\\S"
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20000,
+      "pattern": "\\S"
+    },
+    "status": {
+      "enum": [
+        "active",
+        "blocked",
+        "complete"
+      ]
+    },
+    "acceptance": {
+      "$ref": "#/$defs/strings"
+    },
+    "decisions": {
+      "$ref": "#/$defs/strings"
+    },
+    "changed_paths": {
+      "$ref": "#/$defs/strings"
+    },
+    "blockers": {
+      "$ref": "#/$defs/strings"
+    },
+    "next_action": {
+      "type": "string",
+      "maxLength": 20000
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "command",
+          "status",
+          "summary"
+        ],
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000,
+            "pattern": "\\S"
+          },
+          "status": {
+            "enum": [
+              "passed",
+              "failed",
+              "blocked",
+              "planned"
+            ]
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000,
+            "pattern": "\\S"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status",
+          "evidence"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000,
+            "pattern": "\\S"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "fixed",
+              "disproven",
+              "already-fixed",
+              "unresolved"
+            ]
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000,
+            "pattern": "\\S"
+          },
+          "severity": {
+            "enum": [
+              "CRITICAL",
+              "HIGH",
+              "MEDIUM",
+              "LOW"
+            ]
+          },
+          "evidence_class": {
+            "enum": [
+              "proven-defect",
+              "risk",
+              "hypothesis"
+            ]
+          },
+          "location": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000,
+            "pattern": "\\S"
+          },
+          "trigger_impact": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000,
+            "pattern": "\\S"
+          },
+          "verification": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000,
+            "pattern": "\\S"
+          }
+        }
+      }
+    },
+    "mode": {
+      "enum": [
+        "review",
+        "design",
+        "implementation"
+      ]
+    }
+  },
+  "$defs": {
+    "strings": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 20000,
+        "pattern": "\\S"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "complete"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "blockers": {
+            "maxItems": 0
+          },
+          "checks": {
+            "items": {
+              "if": {
+                "required": [
+                  "required"
+                ],
+                "properties": {
+                  "required": {
+                    "const": false
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "status": {
+                    "const": "passed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "mode"
+              ],
+              "properties": {
+                "mode": {
+                  "enum": [
+                    "review",
+                    "design"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "findings": {
+                  "items": {
+                    "if": {
+                      "required": [
+                        "evidence_class"
+                      ],
+                      "properties": {
+                        "evidence_class": {
+                          "enum": [
+                            "risk",
+                            "hypothesis"
+                          ]
+                        }
+                      }
+                    },
+                    "else": {
+                      "properties": {
+                        "status": {
+                          "enum": [
+                            "fixed",
+                            "disproven",
+                            "already-fixed"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

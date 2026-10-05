@@ -30,7 +30,7 @@ Run-Installer @('-ProjectOnly','-ProjectPath',$Project,'-Force')
 Assert (@(Get-ChildItem $Project -Filter '.ai-audit-backup-*').Count -eq 1) 'Backup missing.'
 Assert (@(Get-ChildItem $Project -Filter '.ai-audit-backup-*' | Get-ChildItem | Where-Object {(Get-Content -Raw $_.FullName) -eq 'original'}).Count -eq 1) 'Original backup lost.'
 Run-Installer @('-ProjectOnly','-ProjectPath',$Project,'-Skills','all')
-foreach($name in 'audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync','project-builder'){
+foreach($name in 'audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync','project-builder','project-cleanup','project-context','skill-evaluation','bug-investigation','feature-delivery','test-engineering','performance-lab','migration-upgrade','ui-accessibility','operations-readiness'){
   $SourceHash=(Get-FileHash (Join-Path $Root ".agents/skills/$name/SKILL.md")).Hash
   Assert ((Get-FileHash (Join-Path $Project ".agents/skills/$name/SKILL.md")).Hash -eq $SourceHash) 'Native skill mismatch.'
   Assert ((Get-FileHash (Join-Path $Project "core/skills/$name/SKILL.md")).Hash -eq $SourceHash) 'Portable skill mismatch.'
@@ -64,7 +64,7 @@ Assert (-not(Test-Path $Global)) 'Global WhatIf wrote files.'
 Run-Installer @('-GlobalOnly','-UserHome',$Global,'-Skills','all')
 foreach($dir in '.agents/skills','.claude/skills','.cursor/skills','.copilot/skills','.gemini/skills','.gemini/config/skills','.gemini/antigravity-cli/skills','.config/opencode/skills','.codeium/windsurf/skills','.cline/skills','.roo/skills'){
   Assert (Test-Path (Join-Path $Global "$dir/enterprise-audit/SKILL.md")) 'Global base skill missing.'
-  foreach($name in 'audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync','project-builder'){
+  foreach($name in 'audit-remediation','security-audit','pr-review','test-gap-analysis','release-readiness','project-docs','audit-fix-loop','task-orchestrator','git-release-sync','project-builder','project-cleanup','project-context','skill-evaluation','bug-investigation','feature-delivery','test-engineering','performance-lab','migration-upgrade','ui-accessibility','operations-readiness'){
     Assert ((Get-FileHash (Join-Path $Global "$dir/$name/SKILL.md")).Hash -eq (Get-FileHash (Join-Path $Root ".agents/skills/$name/SKILL.md")).Hash) 'Global skill mismatch.'
   }
 }
@@ -96,3 +96,29 @@ $BeforeBackupCount=@(Get-ChildItem -LiteralPath (Split-Path $LongBackup[0]) -Fil
 Run-Installer @('-ProjectOnly','-ProjectPath',$LongProject,'-Agents','codex','-Force')
 Assert (@(Get-ChildItem -LiteralPath (Split-Path $LongBackup[0]) -File).Count -eq $BeforeBackupCount) 'Repeated forced upgrade created backups.'
 Write-Output 'PASS: PowerShell installer regressions'
+$Maintenance=Join-Path $Temp 'maintenance-only'
+& $Installer -ProjectOnly -ProjectPath $Maintenance -Agents codex -Skills project-cleanup,git-release-sync
+foreach($name in 'project-cleanup','git-release-sync'){
+  Assert ((Get-FileHash (Join-Path $Maintenance ".agents/skills/$name/SKILL.md")).Hash -eq (Get-FileHash (Join-Path $Root ".agents/skills/$name/SKILL.md")).Hash) 'Maintenance skill mismatch.'
+  Assert ((Get-Content -Raw (Join-Path $Maintenance 'AGENTS.md')).Contains("core/skills/$name/SKILL.md")) 'Maintenance route missing.'
+}
+Assert (-not(Test-Path (Join-Path $Maintenance '.agents/skills/pr-review'))) 'Maintenance selection installed unrelated skill.'
+Write-Output 'PASS: combined cleanup/Git installation'
+$ContextOnly=Join-Path $Temp 'context-only'
+& $Installer -ProjectOnly -ProjectPath $ContextOnly -Agents codex -Skills project-context
+Assert ((Get-FileHash (Join-Path $ContextOnly '.agents/skills/project-context/SKILL.md')).Hash -eq (Get-FileHash (Join-Path $Root '.agents/skills/project-context/SKILL.md')).Hash) 'Project context skill mismatch.'
+Assert (-not(Test-Path (Join-Path $ContextOnly '.agents/skills/project-builder'))) 'Context-only selection installed unrelated skill.'
+Write-Output 'PASS: project-context isolated installation'
+$ResourceSource=Join-Path $Root '.agents/skills'
+foreach($name in 'project-context','skill-evaluation','feature-delivery','enterprise-audit'){
+  foreach($resource in Get-ChildItem (Join-Path $ResourceSource $name) -Recurse -File | Where-Object { $_.Name -ne 'SKILL.md' -and $_.Extension -ne '.pyc' }){
+    $relative=$resource.FullName.Substring((Join-Path $ResourceSource $name).Length).TrimStart([char[]]@('\','/'))
+    foreach($destination in @((Join-Path $Project ".agents/skills/$name"),(Join-Path $Global ".claude/skills/$name"))){
+      Assert ((Get-FileHash (Join-Path $destination $relative)).Hash -eq (Get-FileHash $resource.FullName).Hash) 'Installed resource mismatch.'
+    }
+  }
+}
+Assert ((Get-FileHash (Join-Path $Project 'core/references/stack-guide.md')).Hash -eq (Get-FileHash (Join-Path $Root 'core/stack-profiles.md')).Hash) 'Portable audit profile missing.'
+& python (Join-Path $ContextOnly '.agents/skills/project-context/scripts/task_state.py') --root $ContextOnly init
+Assert ($LASTEXITCODE -eq 0) 'Installed state helper did not run.'
+Write-Output 'PASS: native/global resource parity and installed helper execution'

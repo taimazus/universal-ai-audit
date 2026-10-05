@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "skills": [
+    {
+      "name": "project-context",
+      "description": "Discover missing project decisions, ask necessary questions, persist confirmed answers, and reuse valid context across skill runs and sessions. Use for requirements or operational ambiguity, not questions already answered by available code or notes."
+    },
+    {
+      "name": "task-orchestrator",
+      "description": "Coordinate a user-requested task by selecting relevant installed skills, completing authorized work, and verifying the outcome with concise evidence. Use for explicitly requested adaptive execution or multi-skill coordination, not to replace every skill's routing."
+    },
+    {
+      "name": "project-builder",
+      "description": "Turn a project topic into an interactive requirements brief, detailed scenarios, architecture, and an implemented, verified project. Use for starting or substantially defining a project, not isolated fixes or documentation-only requests."
+    },
+    {
+      "name": "feature-delivery",
+      "description": "Implement a bounded feature in an existing project through contracts, local changes and acceptance verification; use project-builder for a new project or substantial project definition."
+    },
+    {
+      "name": "project-docs",
+      "description": "Create or synchronize project Markdown, local Wiki pages, and editable architecture/workflow diagrams from repository evidence."
+    },
+    {
+      "name": "enterprise-audit",
+      "description": "Perform a comprehensive evidence-based repository audit of correctness, security, concurrency, reliability, performance, and architecture."
+    },
+    {
+      "name": "security-audit",
+      "description": "Audit repository input handling, authorization, secrets, and sensitive data flows with evidence; use for requested security reviews."
+    },
+    {
+      "name": "pr-review",
+      "description": "Review a pull request or local diff for actionable regressions with exact source evidence; use for change reviews, not whole-repository audits."
+    },
+    {
+      "name": "bug-investigation",
+      "description": "Reproduce ambiguous failures, test root-cause hypotheses and repair requested bugs with regression evidence; use for runtime/build failures rather than a preexisting audit report."
+    },
+    {
+      "name": "test-gap-analysis",
+      "description": "Map important repository contracts and failure paths to test assertions and prioritize missing coverage; use for test assessments or plans."
+    },
+    {
+      "name": "test-engineering",
+      "description": "Implement meaningful tests from important behavior contracts, repair flaky tests and verify regressions; use test-gap-analysis for assessment without implementation."
+    },
+    {
+      "name": "audit-remediation",
+      "description": "Fix reported audit defects and verify repairs with focused regression tests; use for remediation rather than read-only review."
+    },
+    {
+      "name": "audit-fix-loop",
+      "description": "Repeat verified repairs, regression checks, and fresh review until confirmed findings are resolved and a complete pass finds no new actionable defects."
+    },
+    {
+      "name": "performance-lab",
+      "description": "Profile and benchmark a specific workload, repair proven bottlenecks and verify correctness and measured improvement; avoid unmeasured optimization claims."
+    },
+    {
+      "name": "migration-upgrade",
+      "description": "Implement and verify dependency, framework, schema or API upgrades with compatibility checks and recovery; separate local migrations from live data operations."
+    },
+    {
+      "name": "ui-accessibility",
+      "description": "Inspect and repair requested UI journeys, responsive behavior, RTL and accessibility with browser evidence; distinguish source inspection from actual user interaction."
+    },
+    {
+      "name": "operations-readiness",
+      "description": "Assess and implement requested health, observability, backup and recovery for a running-service design; use release-readiness for package/install readiness and do not infer deployment permission."
+    },
+    {
+      "name": "project-cleanup",
+      "description": "Identify and remove verified unnecessary project files and directories with a reviewable dry-run, recoverable changes, and relevant regression checks. Use for project cleanup, not general refactoring or Git history cleanup."
+    },
+    {
+      "name": "release-readiness",
+      "description": "Assess installation, packaging, versions, upgrades, compatibility, and rollback before a release; assessment alone does not authorize publishing."
+    },
+    {
+      "name": "git-release-sync",
+      "description": "Prepare and perform authorized Git synchronization, commits, version updates, tags, and hosted releases while preserving history and verifying the published commit. Use for explicit Git or release maintenance requests."
+    },
+    {
+      "name": "skill-evaluation",
+      "description": "Evaluate skill behavior with isolated scenarios, observable assertions and honest measured outcomes; distinguish real agent evaluations from deterministic tool tests."
+    }
+  ]
+}

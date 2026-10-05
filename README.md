@@ -1,3 +1,5 @@
+<div lang="en" dir="ltr" align="left">
+
 <p align="center"><img src="banner.jpg" alt="Universal AI Enterprise Audit Pack" width="100%"></p>
 
 # Universal AI Enterprise Audit Pack
@@ -27,26 +29,44 @@ Use project-only/global-only and agent selection flags shown by `--help` (shell)
 - Windsurf/Cascade, Cline and Roo Code native skills
 
 ## Use
+
+[Skill tools and verification](docs/skill-tooling.en.md) · [Implementation review](docs/skill-suite-review.en.md)
+
+Skills target the project already open in the workspace and discover available context. They checkpoint decisions, actions, checks and next steps in existing task notes or `.ai-work/`, restoring and revalidating them when work resumes. Reinstall updated skills to apply these instructions to existing installations.
+
+See the [36 copyable lifecycle prompts](docs/prompt-library.en.md) or [Persian prompt library](docs/prompt-library.fa.md) for building, development, debugging, reviews, tests and authorized release workflows.
 Ask the agent for `/audit-deep`, `/audit-goal`, `enterprise audit`, `deep code audit`, or `ممیزی جامع پروژه`. Agents do not universally implement slash commands; these are semantic triggers, not guaranteed UI commands.
 
 ## Engineering skills
 
-Ten focused skills supplement `enterprise-audit` in `.agents/skills/`, with Persian reports by default:
+Twenty focused skills supplement `enterprise-audit` in `.agents/skills/`, with Persian reports by default:
+
+The catalog below follows typical project use; select only relevant stages. Documentation skills create new topics in Persian and English by default, accept additional language names/locale codes, and update every existing translation of an affected topic. Apply RTL/right or LTR/left layout by language, keeping commands/code LTR. See the [English skill guide](docs/skills.en.md) and [combined workflows](docs/combinations.en.md).
 
 | Skill | Purpose |
 | --- | --- |
-| `audit-remediation` | Verify audit findings, fix confirmed bugs, and run regression tests. |
+| `project-context` | Ask necessary missing questions, persist confirmed answers, and reuse valid project decisions across runs. |
+| `task-orchestrator` | Select relevant available skills, complete the requested task, and verify acceptance criteria with concise evidence. |
+| `project-builder` | Turn a topic into interactive requirements, scenarios, architecture, implementation and acceptance checks. |
+| `project-docs` | Create and synchronize Markdown documentation, local Wiki pages, and editable diagrams from source evidence. |
 | `security-audit` | Trace untrusted input, access control, secrets, and sensitive data flows. |
 | `pr-review` | Review changes for actionable regressions with exact source evidence. |
 | `test-gap-analysis` | Map important contracts and failure paths to existing test assertions. |
-| `release-readiness` | Check installation, versions, upgrades, packaging, and rollback. |
-| `project-docs` | Create and synchronize Markdown documentation, local Wiki pages, and editable diagrams from source evidence. |
+| `audit-remediation` | Verify audit findings, fix confirmed bugs, and run regression tests. |
 | `audit-fix-loop` | Repeat evidence-based repairs, regression checks, and review until confirmed findings are resolved and the final pass finds no new actionable defects. |
-| `task-orchestrator` | Select relevant available skills, complete the requested task, and verify acceptance criteria with concise evidence. |
+| `project-cleanup` | Perform verified project cleanup with a reviewable dry-run, recovery and regression checks. |
+| `release-readiness` | Check installation, versions, upgrades, packaging, and rollback. |
+| `skill-evaluation` | Evaluate skill behavior with isolated scenarios, observable assertions and honest measured outcomes; distinguish real agent evaluations from deterministic tool tests. |
+| `bug-investigation` | Reproduce ambiguous failures, test root-cause hypotheses and repair requested bugs with regression evidence; use for runtime/build failures rather than a preexisting audit report. |
+| `feature-delivery` | Implement a bounded feature in an existing project through contracts, local changes and acceptance verification; use project-builder for a new project or substantial project definition. |
+| `test-engineering` | Implement meaningful tests from important behavior contracts, repair flaky tests and verify regressions; use test-gap-analysis for assessment without implementation. |
+| `performance-lab` | Profile and benchmark a specific workload, repair proven bottlenecks and verify correctness and measured improvement; avoid unmeasured optimization claims. |
+| `migration-upgrade` | Implement and verify dependency, framework, schema or API upgrades with compatibility checks and recovery; separate local migrations from live data operations. |
+| `ui-accessibility` | Inspect and repair requested UI journeys, responsive behavior, RTL and accessibility with browser evidence; distinguish source inspection from actual user interaction. |
+| `operations-readiness` | Assess and implement requested health, observability, backup and recovery for a running-service design; use release-readiness for package/install readiness and do not infer deployment permission. |
 | `git-release-sync` | Perform authorized Git/version/tag/Release synchronization while preserving history and verifying publication. |
-| `project-builder` | Turn a topic into interactive requirements, scenarios, architecture, implementation and acceptance checks. |
 
-Installers include all ten supplementary skills by default. Use `-Skills none` / `--skills none` for the original audit-only pack, or choose individual skills:
+Installers include all twenty supplementary skills by default. Use `-Skills none` / `--skills none` for the original audit-only pack, or choose individual skills:
 
 ```powershell
 ./install.ps1 -ProjectOnly -Agents codex -Skills pr-review,security-audit -DryRun
@@ -96,3 +116,5 @@ Project installs place the protocol at `core/enterprise-audit.md`, matching the 
 Run `bash tests/install.sh` on Bash, or `powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests/install.ps1` on Windows. Tests use isolated temporary directories and retain fixtures for inspection.
 
 [فارسی](README.fa.md) · [GitHub](https://github.com/taimazus/universal-ai-audit) · [CI](https://github.com/taimazus/universal-ai-audit/actions)
+
+</div>

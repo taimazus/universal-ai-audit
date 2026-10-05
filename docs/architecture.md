@@ -2,14 +2,14 @@
 
 # معماری و جریان‌های اجرا
 
-این repository یک بستهٔ دستورالعمل و installer است؛ سرور، API اجرایی یا پایگاه دادهٔ مستقل ندارد. نسخهٔ ثبت‌شده در [VERSION](../VERSION)، `1.5.0` است و اسکیل `project-builder` را دارد. فهرست فعلی یازده اسکیل را در [راهنمای استفاده](skills.md) ببینید؛ tag قدیمی `v1.4.0` این تغییرات را ندارد و ثبت نسخه به معنی ایجاد Release نیست.
+این repository یک بستهٔ دستورالعمل و installer است؛ سرور یا API سرویس ندارد؛ ابزار حافظهٔ محلی SQLite و ابزار ارزیابی fixture به آن افزوده شده‌اند. نسخهٔ ثبت‌شده در [VERSION](../VERSION)، `1.5.0` است و اسکیل `project-builder` را دارد. فهرست فعلی بیست‌ویک اسکیل را در [راهنمای استفاده](skills.md) ببینید؛ tag قدیمی `v1.4.0` این تغییرات را ندارد و ثبت نسخه به معنی ایجاد Release نیست.
 
 ## اجزا و منبع حقیقت
 
 | جزء | مسئولیت و شواهد کد |
 | --- | --- |
-| پروتکل پایه | [core/enterprise-audit.md](../core/enterprise-audit.md)، متن مشترک ممیزی؛ خوانده‌شده در `install.ps1:17` و `install.sh:57` |
-| اسکیل‌های تکمیلی | `.agents/skills/<name>/SKILL.md`؛ انتخاب و خواندن در `install.ps1:23` تا 29 و `install.sh:29` تا 65 |
+| پروتکل پایه | [core/enterprise-audit.md](../core/enterprise-audit.md)، خروجی تولیدشده از مهارت enterprise-audit و خوانده‌شده توسط هر دو installer |
+| اسکیل‌های تکمیلی | `.agents/skills/<name>/SKILL.md`؛ منبع محتوای تخصصی و منابع اجرایی؛ انتخاب و خواندن توسط هر دو installer |
 | دستورالعمل‌های agent | [AGENTS.md](../AGENTS.md)، [CLAUDE.md](../CLAUDE.md) و [GEMINI.md](../GEMINI.md)؛ مسیریابی به پروتکل، نه موتور اجرای خودکار |
 | installerهای محلی | [install.ps1](../install.ps1) و [install.sh](../install.sh)؛ نصب پروژه‌ای، سراسری یا هر دو، انتخاب agent/skill، dry-run و backup |
 | bootstrapهای Git | [install-from-git.ps1](../install-from-git.ps1) و [install-from-git.sh](../install-from-git.sh)؛ clone branch/tag، اجرای installer و نگه‌داشتن checkout |
@@ -28,8 +28,11 @@ flowchart TD
     Bootstrap --> Checkout["checkout branch یا tag"]
     Checkout --> Installer["installer PowerShell یا Bash"]
     User --> Installer
-    Core["core/enterprise-audit.md"] --> Installer
-    Skills[".agents/skills: ده اسکیل تکمیلی"] --> Installer
+    Contract["core/skill-contract.md و stack-profiles.md"] --> Generator["tools/generate_adapters.py"]
+    Generator --> Core["core/enterprise-audit.md"]
+    Generator --> Adapters["adapterها و core/skills.json"]
+    Core --> Installer
+    Skills[".agents/skills: ۲۰ اسکیل تکمیلی"] --> Installer
     Routes["AGENTS.md: دستور مسیریابی پایه"] --> Installer
     Installer --> Preview["DryRun / WhatIf: بدون نوشتن مقصد"]
     Installer --> Project["مقصد پروژه: core، routes و adapterها"]
@@ -37,12 +40,14 @@ flowchart TD
     Installer --> Backups["backup هنگام تغییر فایل موجود"]
     Project --> Agent["agent مقصد: شناسایی و اجرای دستورالعمل"]
     Global --> Agent
+    Agent --> Memory["project-context: SQLite و یادداشت‌های task"]
+    Agent --> Evaluation["skill-evaluation: fixture و runner مجاز"]
     CI["CI و تست‌های fixture"] --> Installer
 ```
 
 </div>
 
-`enterprise-audit` از پروتکل پایه ساخته می‌شود؛ ده اسکیل دیگر از منابع تکمیلی خوانده می‌شوند. انتخاب `none` فقط اسکیل‌های تکمیلی را کنار می‌گذارد. installerها منابع را پیش از نوشتن مقصد بررسی می‌کنند؛ یک اسکیل به‌تنهایی وجود همهٔ اسکیل‌های اختیاری را تضمین نمی‌کند.
+`enterprise-audit` از پروتکل پایه ساخته می‌شود؛ ۲۰ اسکیل دیگر از منابع تکمیلی خوانده می‌شوند. انتخاب `none` فقط اسکیل‌های تکمیلی را کنار می‌گذارد. installerها منابع را پیش از نوشتن مقصد بررسی می‌کنند؛ یک اسکیل به‌تنهایی وجود همهٔ اسکیل‌های اختیاری را تضمین نمی‌کند.
 
 ## sequence نصب مستقیم از Git
 

@@ -20,18 +20,18 @@ while (($#)); do
       case "$option" in --project) PROJECT="$1";; --agents) AGENTS="$1";; --skills) SKILLS="$1";; --home) USER_HOME="$1";; esac ;;
     -h|--help)
       echo 'install.sh [--project-only|--global-only] [--dry-run] [--force] [--project PATH] [--agents all,codex,claude,cursor,copilot,gemini,antigravity,opencode,windsurf,cline,roo,generic] [--home PATH]'
-      echo '  --skills all|none|audit-remediation,security-audit,pr-review,test-gap-analysis,release-readiness,project-docs,audit-fix-loop,task-orchestrator,git-release-sync,project-builder (default: all)'
+      echo '  --skills all|none|audit-remediation,security-audit,pr-review,test-gap-analysis,release-readiness,project-docs,audit-fix-loop,task-orchestrator,git-release-sync,project-builder,project-cleanup,project-context,skill-evaluation,bug-investigation,feature-delivery,test-engineering,performance-lab,migration-upgrade,ui-accessibility,operations-readiness (default: all)'
       exit 0 ;;
     *) usage_error "Unknown option: $1" ;;
   esac
   shift
 done
-skill_names=(audit-remediation security-audit pr-review test-gap-analysis release-readiness project-docs audit-fix-loop task-orchestrator git-release-sync project-builder)
+skill_names=(audit-remediation security-audit pr-review test-gap-analysis release-readiness project-docs audit-fix-loop task-orchestrator git-release-sync project-builder project-cleanup project-context skill-evaluation bug-investigation feature-delivery test-engineering performance-lab migration-upgrade ui-accessibility operations-readiness)
 [[ "$SKILLS" != ,* && "$SKILLS" != *, && "$SKILLS" != *,,* ]] || usage_error 'Empty skill name.'
 IFS=',' read -r -a requested_skills <<< "$SKILLS"
 for skill in "${requested_skills[@]}"; do
   case "$skill" in
-    all|none|audit-remediation|security-audit|pr-review|test-gap-analysis|release-readiness|project-docs|audit-fix-loop|task-orchestrator|git-release-sync|project-builder) ;;
+    all|none|audit-remediation|security-audit|pr-review|test-gap-analysis|release-readiness|project-docs|audit-fix-loop|task-orchestrator|git-release-sync|project-builder|project-cleanup|project-context|skill-evaluation|bug-investigation|feature-delivery|test-engineering|performance-lab|migration-upgrade|ui-accessibility|operations-readiness) ;;
     *) usage_error "Invalid skill: $skill" ;;
   esac
 done
@@ -64,12 +64,44 @@ for skill in ${selected_skills[@]+"${selected_skills[@]}"}; do
   [[ "$content" =~ [^[:space:]] ]] || { echo "Empty skill source: $skill" >&2; exit 1; }
   skill_contents+=("$content")
 done
+# Load all selected UTF-8 text resources before destination writes (Bash 3.2 arrays).
+resource_names=(); resource_paths=(); resource_contents=()
+for skill in enterprise-audit ${selected_skills[@]+"${selected_skills[@]}"}; do
+  source_dir="$ROOT/.agents/skills/$skill"
+  for resource_dir in scripts references assets agents; do
+    resource_root="$source_dir/$resource_dir"
+    [[ -d "$resource_root" ]] || continue
+    [[ ! -L "$resource_root" ]] || { echo 'Linked skill resources are unsupported.' >&2; exit 1; }
+    resource_links="$(find "$resource_root" -type l -print)" || exit 1
+    [[ -z "$resource_links" ]] || { echo 'Linked skill resources are unsupported.' >&2; exit 1; }
+    find "$resource_root" -type f >/dev/null || exit 1
+    while IFS= read -r -d '' resource_file; do
+      [[ "$resource_file" != */__pycache__/* && "$resource_file" != *.pyc ]] || continue
+      original_size="$(wc -c < "$resource_file")" || exit 1
+      text_size="$(LC_ALL=C tr -d '\000' < "$resource_file" | wc -c)" || exit 1
+      [[ "$original_size" == "$text_size" ]] || { echo 'Binary skill resources are unsupported.' >&2; exit 1; }
+      if command -v iconv >/dev/null; then
+        iconv -f UTF-8 -t UTF-8 "$resource_file" >/dev/null || exit 1
+      fi
+      resource_content="$(cat "$resource_file" && printf '.')" || exit 1
+      resource_content="${resource_content%.}"
+      resource_names+=("$skill")
+      resource_paths+=("${resource_file#"$source_dir/"}")
+      resource_contents+=("$resource_content")
+    done < <(find "$resource_root" -type f -print0)
+  done
+done
 FAILED=0; CHANGED=0; SKIPPED=0
 has(){ [[ ",$AGENTS," == *,all,* || ",$AGENTS," == *,$1,* ]]; }
 write_safe(){
-  local path="$1" content="$2" append="${3:-0}" backup old
+  local path="$1" content="$2" append="${3:-0}" verbatim="${4:-0}" backup old
   if [[ -f "$path" ]]; then
-    old="$(cat "$path")" || { ((FAILED+=1)); return; }
+    if [[ "$verbatim" == 1 ]]; then
+      old="$(cat "$path" && printf '.')" || { ((FAILED+=1)); return; }
+      old="${old%.}"
+    else
+      old="$(cat "$path")" || { ((FAILED+=1)); return; }
+    fi
     if [[ "$old" == "$content" || ( "$append" == 1 && "$old" == *"$content"* ) ]]; then
       ((SKIPPED+=1)); return
     fi
@@ -87,9 +119,22 @@ write_safe(){
   if [[ "$append" == 1 && -f "$path" ]]; then
     printf '\n\n%s\n' "$content" >> "$path" || { ((FAILED+=1)); return; }
   else
-    printf '%s\n' "$content" > "$path" || { ((FAILED+=1)); return; }
+    if [[ "$verbatim" == 1 ]]; then
+      printf '%s' "$content" > "$path" || { ((FAILED+=1)); return; }
+    else
+      printf '%s\n' "$content" > "$path" || { ((FAILED+=1)); return; }
+    fi
   fi
   ((CHANGED+=1))
+}
+# Resource files are UTF-8 text; preserve the installer's backup/dry-run semantics.
+write_skill(){
+  local destination="$1" name="$2" body="$3" resource_index
+  write_safe "$destination/SKILL.md" "$body"
+  for resource_index in ${resource_names[@]+"${!resource_names[@]}"}; do
+    [[ "${resource_names[$resource_index]}" == "$name" ]] || continue
+    write_safe "$destination/${resource_paths[$resource_index]}" "${resource_contents[$resource_index]}" 0 1
+  done
 }
 project_install(){
   local p="$1"
@@ -98,30 +143,34 @@ project_install(){
   has gemini && write_safe "$p/GEMINI.md" "$AGENT" 1
   has cursor && write_safe "$p/.cursor/rules/enterprise-audit.mdc" $'---\ndescription: Universal evidence-based enterprise code audit protocol\nalwaysApply: false\n---\n\n'"$CORE"
   has copilot && write_safe "$p/.github/instructions/enterprise-audit.instructions.md" $'---\napplyTo: "**/*"\n---\n\n'"$CORE"
-  has antigravity && write_safe "$p/.antigravity/skills/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
-  (has codex || has antigravity) && write_safe "$p/.agents/skills/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
+  has antigravity && write_skill "$p/.antigravity/skills/enterprise-audit" enterprise-audit "$AUDIT_SKILL"
+  (has codex || has antigravity) && write_skill "$p/.agents/skills/enterprise-audit" enterprise-audit "$AUDIT_SKILL"
   write_safe "$p/core/enterprise-audit.md" "$CORE"
+  for resource_index in ${resource_names[@]+"${!resource_names[@]}"}; do
+    [[ "${resource_names[$resource_index]}" == enterprise-audit ]] || continue
+    write_safe "$p/core/${resource_paths[$resource_index]}" "${resource_contents[$resource_index]}" 0 1
+  done
   local agent dir
   for agent in claude cursor copilot gemini opencode windsurf cline roo; do
     has "$agent" || continue
     case "$agent" in claude) dir=.claude/skills;; cursor) dir=.cursor/skills;; copilot) dir=.github/skills;; gemini) dir=.gemini/skills;; opencode) dir=.opencode/skills;; windsurf) dir=.windsurf/skills;; cline) dir=.cline/skills;; roo) dir=.roo/skills;; esac
-    write_safe "$p/$dir/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
+    write_skill "$p/$dir/enterprise-audit" enterprise-audit "$AUDIT_SKILL"
     for i in ${selected_skills[@]+"${!selected_skills[@]}"}; do
-      write_safe "$p/$dir/${selected_skills[$i]}/SKILL.md" "${skill_contents[$i]}"
+      write_skill "$p/$dir/${selected_skills[$i]}" "${selected_skills[$i]}" "${skill_contents[$i]}"
     done
   done
   local i skill content route
   for i in ${selected_skills[@]+"${!selected_skills[@]}"}; do
     skill="${selected_skills[$i]}"; content="${skill_contents[$i]}"
-    write_safe "$p/core/skills/$skill/SKILL.md" "$content"
+    write_skill "$p/core/skills/$skill" "$skill" "$content"
     route="# Universal Engineering Skill: $skill"$'\n'"When asked to use $skill, read core/skills/$skill/SKILL.md and follow its scoped workflow."
     (has generic || has codex) && write_safe "$p/AGENTS.md" "$route" 1
     has claude && write_safe "$p/CLAUDE.md" "$route" 1
     has gemini && write_safe "$p/GEMINI.md" "$route" 1
-    (has codex || has antigravity) && write_safe "$p/.agents/skills/$skill/SKILL.md" "$content"
+    (has codex || has antigravity) && write_skill "$p/.agents/skills/$skill" "$skill" "$content"
     has cursor && write_safe "$p/.cursor/rules/$skill.mdc" $'---\ndescription: Use '"$skill"$' for its scoped engineering workflow\nalwaysApply: false\n---\n\n'"$content"
     has copilot && write_safe "$p/.github/instructions/$skill.instructions.md" $'---\napplyTo: "**/*"\n---\n\n'"When asked to use $skill, follow this workflow; otherwise these instructions do not apply."$'\n\n'"$content"
-    has antigravity && write_safe "$p/.antigravity/skills/$skill/SKILL.md" "$content"
+    has antigravity && write_skill "$p/.antigravity/skills/$skill" "$skill" "$content"
   done
 }
 [[ "$MODE" != global ]] && project_install "$PROJECT"
@@ -138,9 +187,9 @@ if [[ "$MODE" != project ]]; then
   has cline && global_roots+=(.cline/skills)
   has roo && global_roots+=(.roo/skills)
   for dir in ${global_roots[@]+"${global_roots[@]}"}; do
-    write_safe "$USER_HOME/$dir/enterprise-audit/SKILL.md" "$AUDIT_SKILL"
+    write_skill "$USER_HOME/$dir/enterprise-audit" enterprise-audit "$AUDIT_SKILL"
     for i in ${selected_skills[@]+"${!selected_skills[@]}"}; do
-      write_safe "$USER_HOME/$dir/${selected_skills[$i]}/SKILL.md" "${skill_contents[$i]}"
+      write_skill "$USER_HOME/$dir/${selected_skills[$i]}" "${selected_skills[$i]}" "${skill_contents[$i]}"
     done
   done
 fi

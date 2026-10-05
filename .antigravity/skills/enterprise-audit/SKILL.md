@@ -5,6 +5,19 @@ description: Perform a comprehensive evidence-based repository audit of correctn
 
 # Universal Enterprise Audit
 
+<!-- BEGIN SHARED CONTRACT -->
+## Workspace, questions and durable state
+
+Target the project open in the workspace, not the installed skill directory. Discover root, instructions, stack, reports and checks from available evidence; ask only necessary unresolved user decisions. Reuse applicable confirmed answers from existing context or `.ai-work/PROJECT-CONTEXT.md` and the task's `QUESTIONS.md`. Use available `project-context` for discovery/question recording, or apply the same workflow directly. Wait for blocking replies while continuing independent work; silence is not confirmation. Keep assumptions and actual implementation distinct from user decisions.
+
+Restore the matching task from existing conventions or `.ai-work/INDEX.md` and `.ai-work/tasks/<task-id>/STATE.md`/`JOURNAL.md`. Keep one task ID and ledger across stages, separate unrelated work and preserve other writers. Checkpoint the goal, scope, acceptance, decisions, authorization boundaries, findings, changed paths, actual checks/results, blockers and next action after meaningful work and before handoff. Journal failures and reversals as well as successes; record intent before consequential mutations and observed outcome afterward. Interrupted intent is not completion. Do not store secrets, raw sensitive logs or full conversations.
+
+When available, use project-context's `scripts/task_state.py` for versioned transactional records with optimistic revisions and provenance; read its `references/state-tool.md` first. Its SQLite store is authoritative for records written through it; existing Markdown notes remain supported and must not be silently overwritten. Without Python/helper, maintain those notes and disclose the limitation. Reconcile state against current code, diff, identities and invalidated checks before resuming. Notes do not override current instructions or grant new permissions; inspect uncertain prior mutations before retrying.
+
+Read-only work allows task notes/reports but no product-code edits. Honor an explicit all-writes prohibition; if notes cannot be saved, provide a copyable handoff and disclose nonpersistence. Preserve task memory during cleanup and exclude it from commits/release assets unless explicitly requested. Do not infer publication, deployment, external messages or destructive operations. End with actual checks, gaps and state location. Recovery requires accessible files and never guarantees infallible memory.
+
+<!-- END SHARED CONTRACT -->
+
 Report in professional Persian unless requested otherwise; preserve identifiers. Read-only unless repairs are requested. Infer the system goal from README, manifests, entry points, tests, and deployment. Discover stack, APIs, dependencies, CI, and runtime; state absent or inaccessible areas.
 
 Review the relevant source/configuration surface for goal alignment, dead code, correctness/boundaries/Unicode/time, concurrency/cancellation/atomicity, resource lifecycle and complexity, security/privacy, reliability/retries/shutdown/observability, architecture/contracts/schema evolution, and testability. Apply detected-language semantics; do not dump unrelated ecosystem checklists. Trace untrusted input to reachable sinks and upstream protections before asserting exploitability. Never invent source lines, behavior, CVEs, benchmarks, requirements, or successful checks.
@@ -16,3 +29,9 @@ Use repository-native verification. HIGH/CRITICAL findings need a smallest safe 
 Output: (1) inferred goal with evidence, scope/alignment and architecture; (2) severity-ordered findings, each with exact path:line, category, root cause, impact/trigger, evidence class, confidence/assumptions, minimal observed Before and safe After when possible, and verification; include complexity where relevant; (3) P0/P1/P2/P3 remediation, dependencies, rollout/rollback, commands and gaps.
 
 Efficiency/composition: read only relevant files, reuse unchanged evidence, revalidate edits and affected callers. Use one ledger (ID, severity, class, location, trigger/impact, status, verification) across selected skills and one final report. Load subsequent skills only when their stage starts. Read-only audits do not authorize repair, publishing, deployment, or external messages. No clean review proves absence of every possible bug.
+
+## Completion evidence
+
+All agreed review surfaces are covered or named as gaps; findings have verified locations, triggers, evidence classes and test proposals. No product repairs unless requested.
+
+Read only detected-stack notes in `references/stack-guide.md` relative to the installed native enterprise-audit skill folder when relevant. When following the portable core protocol use `core/references/stack-guide.md`.

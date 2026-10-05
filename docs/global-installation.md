@@ -73,6 +73,8 @@ bash ./install.sh --global-only --agents gemini,copilot,opencode --skills securi
 session تازه باز کنید یا skillها را مطابق محصول reload کنید. ابتدا دستور معمولی و قابل‌حمل زیر را امتحان کنید:
 
 ```text
+پروژهٔ باز هدف است؛ اطلاعات مرتبط را از محیط کشف کن. وضعیت task را از .ai-work یا قرارداد موجود بخوان و با کد تطبیق بده.
+تصمیم‌ها، اقدامات، checks و قدم بعدی را در STATE.md و JOURNAL.md همان task ذخیره کن؛ secrets ثبت نکن.
 از skill security-audit برای بررسی امنیت همین پروژه استفاده کن؛ فقط یافته‌های مستند را فارسی گزارش بده.
 ```
 
@@ -81,6 +83,8 @@ session تازه باز کنید یا skillها را مطابق محصول reloa
 نمونهٔ ترکیبی:
 
 ```text
+پروژهٔ باز هدف است؛ اطلاعات مرتبط را از محیط کشف کن. وضعیت task را از .ai-work یا قرارداد موجود بخوان و با کد تطبیق بده.
+تصمیم‌ها، اقدامات، checks و قدم بعدی را در STATE.md و JOURNAL.md همان task ذخیره کن؛ secrets ثبت نکن.
 security-audit → audit-fix-loop → project-docs → release-readiness را روی همین repository اجرا کن.
 یافته‌های اثبات‌شده را رفع و تست کن، مستندات نهایی را هماهنگ کن و آمادگی انتشار را گزارش بده.
 یک ledger مشترک و یک گزارش فارسی بده؛ publish یا deployment انجام نده.

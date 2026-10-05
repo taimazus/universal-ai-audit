@@ -2,6 +2,13 @@
 
 [فارسی](CHANGELOG.fa.md)
 
+## Unreleased — 2026-10-05
+
+- Add eight specialist skills, for 21 skills total, and expand the bilingual library to 36 lifecycle scenarios.
+- Add transactional project state with revision history, applicability fingerprints and executable failure/recovery tests.
+- Generate shared contracts/adapters from canonical sources, distribute skill resources, and add stack profiles and evaluation fixtures/runner.
+- Distinguish deterministic tool tests, prepared fixtures and real-agent evaluations; extend CI tool checks.
+
 ## 1.5.0 — 2026-10-02
 
 - Synchronize documentation with the current source, add Persian architecture/sequence diagrams and a local Wiki draft, and clarify unreleased versus tagged content.
